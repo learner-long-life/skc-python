@@ -97,7 +97,7 @@ def get_hermitian_basis(d):
 	for k in range(2,d):
 		h_k_d1 = B1.get(('h',(k,d-1)))
 		op_matrix = matrix_direct_sum(h_k_d1.matrix, matrixify(0))
-		op_name = "h_{"+str(k)+","+str(d-1)+"}"
+		op_name = "h_{"+str(k)+","+str(d)+"}"
 		B[('h', (k,d))] = Operator(name=op_name, matrix=op_matrix)
 	
 	# h_{d,d}

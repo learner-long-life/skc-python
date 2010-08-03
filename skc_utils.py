@@ -11,6 +11,13 @@ import scipy.linalg
 TOLERANCE = 1e-15
 TOLERANCE2 = 1e-14
 TOLERANCE3 = 1e-13
+TOLERANCE4 = 1e-12
+TOLERANCE5 = 1e-11
+TOLERANCE6 = 1e-10
+TOLERANCE7 = 1e-9
+TOLERANCE8 = 1e-8
+TOLERANCE9 = 1e-7
+TOLERANCE10 = 1e-6
 
 ##############################################################################
 def matrixify(array):
@@ -35,11 +42,14 @@ def get_eigenvalues(M):
 	
 ##############################################################################
 def trace_norm(M):
-	op_M = Operator(name="M", matrix=M)
-	op_M_dag = op_M.dagger()
-	ops_M_M_dag = op_M.multiply(op_M_dag)
-	trace = numpy.trace(ops_M_M_dag.matrix)
+	trace = numpy.trace(M * M.H)
 	return math.sqrt(trace)
+	
+##############################################################################
+def operator_norm(M):
+	eig_vals = scipy.linalg.eigvals(M)
+	eig_vals = [numpy.abs(x) for x in eig_vals]
+	return numpy.max(eig_vals)
 	
 ##############################################################################
 def trace_distance(matrix_A, matrix_B):
@@ -57,8 +67,10 @@ def fowler_distance(matrix_A, matrix_B):
 	matrix_adjoint = numpy.transpose(numpy.conjugate(matrix_A))
 	prod = matrix_adjoint * matrix_B
 	trace = numpy.trace(prod)
-	frac = (d - abs(trace)) / d
-	return math.sqrt(frac)
+	frac = (1.0*(d - numpy.abs(trace))) / d
+	# Because frac can be negative due to floating point error, take the
+	# absolute value before taking square root, since we expect real numbers
+	return math.sqrt(numpy.abs(frac))
 
 ##############################################################################
 def assert_approx_equals_tolerance(value1, value2, tolerance):

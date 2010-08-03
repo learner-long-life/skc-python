@@ -2,6 +2,7 @@ from skc_diagonalize import *
 from skc_basis import *
 from skc_utils import *
 from skc_compose import *
+from skc_decompose import *
 
 import numpy
 import math
@@ -11,7 +12,7 @@ def test_decomposing_unitary(d):
 	print "TESTING DECOMPOSITION OF UNITARY IN SU("+str(d)+")"
 	B = get_hermitian_basis(d)
 	
-	(matrix_U, components) = get_random_unitary(B)
+	(matrix_U, components, angle) = get_random_unitary(B)
 	
 	print "U= " + str(matrix_U)
 		
@@ -36,12 +37,14 @@ def test_decomposing_unitary(d):
 	(components2, K) = get_basis_components(matrix_H, B)
 	
 	print "K= " + str(K)
+	print "angle= " + str(angle)
+	assert_approx_equals_tolerance(numpy.abs(K), numpy.abs(2*angle), TOLERANCE4)
 	
-	print "Renormalizing... "
+	#print "Renormalizing... "
 	# Renormalize components
-	for key,value in components2.items():
-		components2[key] = value / K
-		print "("+str(key)+")= " + str(components2[key])
+	#for key,value in components2.items():
+	#	components2[key] = value / K
+	#	print "("+str(key)+")= " + str(components2[key])
 	
 	# Assert that the components are now normalized
 	norm = scipy.linalg.norm(components.values())
@@ -56,7 +59,7 @@ def test_decomposing_unitary(d):
 		print "  comput= " + str(components2[key])
 		ratio = abs(components[key]) / abs(components2[key])
 		#print "  ratio= " + str(ratio)
-		assert_approx_equals_tolerance(ratio, 1, TOLERANCE3)
+		assert_approx_equals_tolerance(ratio, 1, TOLERANCE6)
 
 test_decomposing_unitary(d=2)
 test_decomposing_unitary(d=4)

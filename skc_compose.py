@@ -27,16 +27,19 @@ def get_random_hermitian(basis):
 	sum = matrixify(numpy.zeros([d,d]))
 	
 	for k,v in basis.items_minus_identity():
-		sum += components[k] * basis.get(k).matrix
+		print str(k) + " => " + str(v)
+		sum = sum + (components[k] * basis.get(k).matrix)
+	#print str(sum)
 		
 	assert_matrix_hermitian(sum)
 	
 	return (sum, components)
 
 ##############################################################################
-def exp_hermitian_to_unitary(matrix_H, basis):
+def exp_hermitian_to_unitary(matrix_H, angle, basis):
+	print "exp_hermitian_to_unitary angle= " + str(angle)
 	(matrix_V, matrix_W) = diagonalize(matrix_H, basis)
-	Udiag = matrix_exp_diag(-1j*(math.pi/2)*matrix_W)
+	Udiag = matrix_exp_diag(-1j*angle*matrix_W)
 	assert_matrix_unitary(Udiag)
 	# Now translate it back to its non-diagonal form
 	U = matrix_V * Udiag * matrix_V.I
@@ -50,6 +53,21 @@ def exp_hermitian_to_unitary(matrix_H, basis):
 # This works for general SU(d), where d is given by the hermitian basis.
 def get_random_unitary(basis_H):
 	(matrix_H, components_H) = get_random_hermitian(basis_H)
+	# Choose a random angle between -pi and pi
+	angle = (random.random() * math.pi) - (math.pi/2)
 	
-	matrix_U = exp_hermitian_to_unitary(matrix_H, basis_H)
-	return (matrix_U, components_H)
+	matrix_U = exp_hermitian_to_unitary(matrix_H, angle, basis_H)
+	return (matrix_U, components_H, angle)
+	
+##############################################################################
+# Compose a matrix given components from a basis
+# Does not check whether components are normalized, or even from the basis
+def matrix_from_components(components, basis):
+	assert_approx_equals(scipy.linalg.norm(components.values()), 1)
+	d = basis.d
+	sum = matrixify(numpy.zeros([d,d]))
+	for k,v in components.items():
+		print str(k) + " => " + str(v)
+		sum = sum + (v * basis.get(k).matrix)
+	#print str(sum)
+	return sum

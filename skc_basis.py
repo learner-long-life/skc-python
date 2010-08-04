@@ -90,7 +90,7 @@ def get_standard_vector_basis(d):
 # From http://en.wikipedia.org/wiki/Generalizations_of_Pauli_matrices#Construction
 def get_hermitian_basis(d):
 
-	print "Getting Hermitian basis for SU("+str(d)+")"
+	#print "Getting Hermitian basis for SU("+str(d)+")"
 	
 	range_d = range(d)
 	
@@ -122,12 +122,12 @@ def get_hermitian_basis(d):
 	
 	# h_{d,d}
 	scale = math.sqrt(2.0/(d*(d-1)))
-	print "scale= " + str(scale)
+	#print "scale= " + str(scale)
 	Id1 = matrixify(numpy.eye(d-1))
 	op_matrix = scale * matrix_direct_sum(Id1, matrixify(1-d))
 	op_name = "h_{"+str(d)+","+str(d)+"}"
 	B[('h',(d,d))] = Operator(name=op_name, matrix=op_matrix)
-	print op_name + "= " + str(op_matrix)
+	#print op_name + "= " + str(op_matrix)
 	
 	# It is easier to generate Ejk with outer product of standard vector basis
 	v = get_standard_vector_basis(d)
@@ -231,7 +231,7 @@ def matrix_inner_product(matrix_A, matrix_B):
 	assert(shape_A == shape_B) # matrices should have same shape
 	# Reshape matrices into one long array/vector
 	matrix_length = shape_A[0] * shape_A[1]
-	print "matrix_length= " + str(matrix_length)
+	#print "matrix_length= " + str(matrix_length)
 	reshaped_A = matrix_A.reshape(matrix_length)
 	reshaped_B = matrix_B.reshape(matrix_length)
 	#print "reshaped_A= " + str(reshaped_A)

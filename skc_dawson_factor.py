@@ -1,57 +1,27 @@
 import math
 import numpy
-from skc_unitary_decompose import *
-from skc_aram_factor import *
 from skc_utils import *
-
-##############################################################################
-# This is plagiarized from Chris Dawson's su2.cpp: su2::mat_to_cart3
-def matrix_to_unitary4d(matrix_U):
-
-	print "matrix_to_unitary4d of " + str(matrix_U)
-	# The below are negative, and contain an extra factor of i, b/c of the
-	# term -i sin(theta/2) (sx*X + sy*Y + sz*Z)
-	sx = -1 * matrix_U[(0,1)].imag;
-	# x component, imag(U(1,0)) should be identical
-	assert_approx_equals(matrix_U[(0,1)].imag, matrix_U[(1,0)].imag)
-	sy = matrix_U[(1,0)].real;
-	# y component, real(U(0,1)) should be identical
-	assert_approx_equals(matrix_U[(1,0)].real, -matrix_U[(0,1)].real)
-	sz = (matrix_U[(1,1)].imag - matrix_U[(0,0)].imag)/2.0;
-	# z component
-	assert_approx_equals(matrix_U[(1,1)].imag, -matrix_U[(0,0)].imag)
-	# identity component
-	si = (matrix_U[(0,0)].real + matrix_U[(1,1)].real)/2.0;
-	assert_approx_equals(matrix_U[(0,0)].real, matrix_U[(1,1)].real)
-	theta = 2 * math.acos(si)
-	sin_theta_half = math.sin(theta / 2)
-	# I think the components into Unitary are supposed to still contain
-	# sin(theta/2) factor, after all si does above
-	#sx /= sin_theta_half
-	#sy /= sin_theta_half
-	#sz /= sin_theta_half
-	return Unitary4D(ni=si, nx=sx, ny=sy, nz=sz)
+#from skc_compose import *
+from skc_decompose import *
 
 ##############################################################################
 # The similarity matrix is the rotation to get from A to B?
-def find_similarity_matrix(matrix_A, matrix_B):
+def find_similarity_matrix(matrix_A, matrix_B, basis):
 
-	unitary_A = matrix_to_unitary4d(matrix_A)
-	unitary_B = matrix_to_unitary4d(matrix_B)
+	(components_A, scale_A, hermitian_A) = unitary_to_axis(matrix_A, basis)
+	(components_B, scale_B, hermitian_B) = unitary_to_axis(matrix_B, basis)
 	
-	[axis_a, angle_a] = unitary_A.to_rotation()
-	[axis_b, angle_b] = unitary_B.to_rotation()
-	print "Rotation A: " + str(axis_a) + " " + str(angle_a)
-	print "Rotation B: " + str(axis_b) + " " + str(angle_b)
+	angle_a = scale_A / 2.0
+	angle_b = scale_B / 2.0
 
 	# angle_a and angle_b should be the same
 	assert_approx_equals(angle_a, angle_b)
 
-	vector_a = axis_a.to_array()
-	vector_b = axis_b.to_array()
+	vector_a = basis.sort_canonical_order(components_A)
+	vector_b = basis.sort_canonical_order(components_B)
 	
-	norm_a = vector_norm(vector_a)
-	norm_b = vector_norm(vector_b)
+	norm_a = scipy.linalg.norm(vector_a)
+	norm_b = scipy.linalg.norm(vector_b)
 	
 	# Rotation axes should be unit vectors
 	assert_approx_equals(norm_a, 1)
@@ -66,24 +36,27 @@ def find_similarity_matrix(matrix_A, matrix_B):
 
 	# what is the interpretation of the cross product here? did we need to
 	# normalize this? oops
-	norm_s = vector_norm(vector_s)
+	norm_s = scipy.linalg.norm(vector_s)
 	if (abs(norm_s) < TOLERANCE):
 		# The vectors are parallel or anti parallel 
 		# i am just pretending they are parallel so fix this.
-		return I2.matrix;
+		return basis.identity.matrix;
 
 	#angle_s = math.acos(ab_dot_product / (norm_a * norm_b))
 	# Occasionally the lengths of these vectors will drift, so renormalize here
 	angle_s = math.acos(ab_dot_product / (norm_a * norm_b))
+	
+	assert((angle_s > -PI_HALF) and (angle_s < PI_HALF))
 	for i in range(len(vector_s)):
 		vector_s[i] /= norm_s
 
 	# compose angle and axis of rotation into a matrix
-	axis_s = Cart3DCoords(vector_s[0], vector_s[1], vector_s[2])
-	print "axis_s = " + str(axis_s)
-	unitary_S = axis_s.to_unitary_rotation(angle_s)
-	unitary_S.print_string()
-	return unitary_S.to_matrix()
+	components_S = basis.unsort_canonical_order(vector_s)
+	print "components_S = " + str(components_S)
+	matrix_U = axis_to_unitary(components_S, angle_s/2.0, basis)
+	print "matrix_U= " + str(matrix_U)
+
+	return matrix_U
 
 #############################################################################
 def dawson_x_group_factor(matrix_U):

@@ -19,19 +19,11 @@ TOLERANCE8 = 1e-8
 TOLERANCE9 = 1e-7
 TOLERANCE10 = 1e-6
 
+PI_HALF = math.pi / 2
+
 ##############################################################################
 def matrixify(array):
 	return numpy.matrix(array, dtype=numpy.complex)
-	
-##############################################################################
-# Given an axis and a rotation angle, return the associated rotation matrix
-# axis - a vector of 3 elements indicating the x, y, and z components of axis
-# angle - floating point number, rotation angle in radians
-def compose(axis, angle):
-	raise RuntimeError("Not implemented for SU(D) yet!")
-	
-def vector_norm(array):
-	raise RuntimeError("Not implemented for SU(D) yet!")
 
 ##############################################################################
 # The following functions (get_eigenvalues and trace_distance) are plagiarized from

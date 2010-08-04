@@ -18,10 +18,10 @@ def get_basis_components(matrix_H, basis):
 	# higher up
 	for key,gate in basis.items_minus_identity():
 		kc_alpha = numpy.trace(matrix_H * gate.matrix)
-		component_dict[key] = kc_alpha
+		component_dict[key] = kc_alpha.real
 		print str(key) + "=> " + str(kc_alpha)
 		# Components should be real, with negligible imaginary parts
-		#assert_approx_equals(kc_alpha.imag, 0)
+		assert_approx_equals(kc_alpha.imag, 0)
 	
 	# Extract the identity component as a special case.
 	# Maybe there's a better way to do this?
@@ -37,6 +37,9 @@ def get_basis_components(matrix_H, basis):
 	sign = None
 
 	for key,value in component_dict.items():
+		# If a value is close to zero, don't use it to determine sign
+		if (numpy.abs(value) < TOLERANCE):
+			continue
 		if (sign == None):
 			if (value > 0):
 				sign = +1

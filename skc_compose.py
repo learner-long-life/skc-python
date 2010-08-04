@@ -74,6 +74,8 @@ def matrix_from_components(components, basis):
 
 ##############################################################################
 def axis_to_unitary(axis_components, angle, basis):
+	# Check that the axis is normalized
+	assert_approx_equals(scipy.linalg.norm(axis_components.values()), 1)
 	matrix_H = matrix_from_components(axis_components, basis)
 	matrix_U = exp_hermitian_to_unitary(matrix_H, angle, basis)
 	return matrix_U

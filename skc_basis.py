@@ -16,6 +16,8 @@ class Basis:
 	def __init__(self, d, basis_dict, identity_key):
 		self.d = d
 		self.basis_dict = basis_dict
+		self.keys_minus_identity = list(basis_dict.keys())
+		self.keys_minus_identity.remove(identity_key)
 		self.identity_key = identity_key
 		self.identity = basis_dict[identity_key]
 		assert(self.identity != None)
@@ -40,6 +42,12 @@ class Basis:
 	def map(self, map_function):
 		for gate in self.basis_dict.values():
 			map_function(gate.matrix)
+			
+	def sort_canonical_order(self, components):
+		array = []
+		for key in self.keys_minus_identity:
+			array.append(components[key])
+		return array
 		
 	def print_string(self):
 		print "SU("+str(self.d)+") Basis"

@@ -34,3 +34,16 @@ for key in components.keys():
 	index2 = sorted_components2.index(value2)
 	
 	assert(index == index2)
+	
+# Roundtrip by creating a dictionary from a vector in canonical order
+component_dict = B.unsort_canonical_order(sorted_components)
+component_dict2 = B.unsort_canonical_order(sorted_components2)
+
+# Check that our dictionary is the same as before
+for key,value in component_dict.items():
+	value2 = components[key]
+	assert_approx_equals(value, value2)
+	
+for key,value in component_dict2.items():
+	value2 = components2[key]
+	assert_approx_equals(value, value2)

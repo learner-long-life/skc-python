@@ -43,12 +43,24 @@ class Basis:
 		for gate in self.basis_dict.values():
 			map_function(gate.matrix)
 			
+	# Return a list of the given component dictionary values
+	# ordered in the canonical key order of this basis
 	def sort_canonical_order(self, components):
 		array = []
 		for key in self.keys_minus_identity:
 			array.append(components[key])
 		return array
 		
+	# Return a dictionary of the given list of values,
+	# assuming they are in the same key order as this basis
+	def unsort_canonical_order(self, array):
+		dict = {}
+		keys = self.keys_minus_identity
+		array_len = len(array)
+		for i in range(array_len):
+			dict[keys[i]] = array[i]
+		return dict
+
 	def print_string(self):
 		print "SU("+str(self.d)+") Basis"
 		for gate in self.basis_dict.values():

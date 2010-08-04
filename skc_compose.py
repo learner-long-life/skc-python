@@ -71,3 +71,9 @@ def matrix_from_components(components, basis):
 		sum = sum + (v * basis.get(k).matrix)
 	#print str(sum)
 	return sum
+
+##############################################################################
+def axis_to_unitary(axis_components, angle, basis):
+	matrix_H = matrix_from_components(axis_components, basis)
+	matrix_U = exp_hermitian_to_unitary(matrix_H, angle, basis)
+	return matrix_U

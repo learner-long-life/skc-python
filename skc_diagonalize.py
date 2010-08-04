@@ -18,21 +18,9 @@ def diagonalize(matrix_U, basis):
 	print "eig_vals= " + str(eig_vals)
 	print "eig_vecs= " + str(eig_vecs)
 	
-	# Create rows of the matrix from elements of the eigenvectors, to
-	# fake creating a matrix from column vectors
 	eig_length = len(eig_vecs)
 	assert(len(eig_vals) == eig_length)
 	
-	## Verify eigenvalues and eigenvectors, via Av = \lambdav (eigenvalue eqn)
-	#for i in range(eig_length):
-	#	col_vec = numpy.matrix(eig_vecs[:,i]).transpose()
-	#	scaled_vec1 = matrix_U * col_vec
-	#	#print "scaled_vec1= " + str(scaled_vec1)
-	#	scaled_vec2 = col_vec * eig_vals[i]
-	#	#print "scaled_vec2= " + str(scaled_vec2)
-	#	dist = vector_distance(scaled_vec1, scaled_vec2)
-	#	assert_approx_equals(dist, 0)
-		
 	# Create the diagonalization matrix V
 	matrix_V = numpy.matrix(eig_vecs) #numpy.matrix(rows)
 	

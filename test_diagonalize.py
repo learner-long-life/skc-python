@@ -6,18 +6,23 @@ from skc_utils import *
 from skc_basis import *
 from skc_operator import *
 from skc_compose import *
+import unittest
 
+# Maximum dimension (2**D) to test
+D=4
+
+##############################################################################
 def test_diagonalize(d):
 	B = get_hermitian_basis(d) # SU(2) basis
 	
 	(matrix_U, components) = get_random_hermitian(B)
 	
-	print "U= " + str(matrix_U)
+	#print "U= " + str(matrix_U)
 	
 	(eig_vals, eig_vecs) = scipy.linalg.eig(matrix_U)
 	
-	print "eig_vals= " + str(eig_vals)
-	print "eig_vecs= " + str(eig_vecs)
+	#print "eig_vals= " + str(eig_vals)
+	#print "eig_vecs= " + str(eig_vecs)
 	
 	# Create rows of the matrix from elements of the eigenvectors, to
 	# fake creating a matrix from column vectors
@@ -37,7 +42,7 @@ def test_diagonalize(d):
 	# Create the diagonalization matrix V
 	matrix_V = numpy.matrix(eig_vecs) #numpy.matrix(rows)
 	
-	print "V= " + str(matrix_V)
+	#print "V= " + str(matrix_V)
 	
 	# Get adjoint
 	matrix_V_dag = numpy.transpose(numpy.conjugate(matrix_V))
@@ -50,18 +55,19 @@ def test_diagonalize(d):
 	#matrix_W = matrix_V * matrix_U * matrix_V_dag
 	matrix_W = matrix_V.I * matrix_U * matrix_V
 	
-	print "W= " + str(matrix_W)
+	#print "W= " + str(matrix_W)
 	
 	# Construct the diagonalized matrix that we want
 	matrix_diag = numpy.matrix(numpy.eye(d), dtype=numpy.complex)
 	for i in range(0,eig_length):
 		matrix_diag[(i,i)] = eig_vals[i]
 	
-	print "diag= " + str(matrix_diag)
+	#print "diag= " + str(matrix_diag)
 	
-	dist = fowler_distance(matrix_diag, matrix_W)
+	dist = trace_distance(matrix_diag, matrix_W)
 	
-	print "dist(diag,W)= " + str(dist)
+	#print "dist(diag,W)= " + str(dist)
+	assert_approx_equals(dist, 0)
 
 	# Verify that off-diagonal elements are close to zero
 	for i in range(eig_length):
@@ -71,8 +77,26 @@ def test_diagonalize(d):
 				
 	for i in range(0,eig_length):
 		diff = abs(matrix_W[(i,i)] - eig_vals[i])
-		print "eig_val("+str(i)+") diff= " + str(diff)
-	
-test_diagonalize(d=2)
-test_diagonalize(d=4)
-test_diagonalize(d=8)
+		assert_approx_equals(diff, 0)
+		#print "eig_val("+str(i)+") diff= " + str(diff)
+
+##############################################################################
+# Class for testing matrix diagonalization for various SU(d)
+class TestDiagonalize(unittest.TestCase):
+
+	def test_diagonalize(self):
+		for i in range(1,D+1):
+			d = 2**i
+			test_diagonalize(d=d)
+
+##############################################################################
+def get_suite():
+	suite = unittest.TestSuite()
+	loader = unittest.TestLoader()
+	suite1 = loader.loadTestsFromTestCase(TestDiagonalize)
+	suite.addTest(suite1)
+	return suite
+
+if (__name__ == '__main__'):
+	suite = get_suite()
+	unittest.TextTestRunner(verbosity=3).run(suite)

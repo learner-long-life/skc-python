@@ -11,12 +11,12 @@ from skc_utils import *
 # V^{-1} * U * V = W
 def diagonalize(matrix_U, basis):
 	d = basis.d
-	print "U= " + str(matrix_U)
+	#print "U= " + str(matrix_U)
 	
 	(eig_vals, eig_vecs) = scipy.linalg.eig(matrix_U)
 	
-	print "eig_vals= " + str(eig_vals)
-	print "eig_vecs= " + str(eig_vecs)
+	#print "eig_vals= " + str(eig_vals)
+	#print "eig_vecs= " + str(eig_vecs)
 	
 	eig_length = len(eig_vecs)
 	assert(len(eig_vals) == eig_length)
@@ -24,7 +24,7 @@ def diagonalize(matrix_U, basis):
 	# Create the diagonalization matrix V
 	matrix_V = numpy.matrix(eig_vecs) #numpy.matrix(rows)
 	
-	print "V= " + str(matrix_V)
+	#print "V= " + str(matrix_V)
 	
 	# Get adjoint
 	matrix_V_dag = numpy.transpose(numpy.conjugate(matrix_V))
@@ -36,7 +36,7 @@ def diagonalize(matrix_U, basis):
 	# Multiply V^{-1} * U * V to diagonalize
 	matrix_W = matrix_V.I * matrix_U * matrix_V
 	
-	print "W= " + str(matrix_W)
+	#print "W= " + str(matrix_W)
 	
 	# Construct the diagonalized matrix that we want
 	matrix_diag = numpy.matrix(numpy.eye(d), dtype=numpy.complex)

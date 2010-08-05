@@ -5,6 +5,9 @@ from skc_utils import *
 
 import unittest
 
+# Maximum dimension (2**D) to test
+D = 4
+
 ##############################################################################
 # Method for constructing a matrix from basis components
 def test_recompose(d):
@@ -27,10 +30,11 @@ def test_recompose(d):
 class TestRecompose(unittest.TestCase):
 
 	def test_recompose(self):
-		for i in range(1,5):
+		for i in range(1,D+1):
 			d = 2**i
 			test_recompose(d=d)
 
+##############################################################################
 def get_suite():
 	suite = unittest.TestSuite()
 	loader = unittest.TestLoader()

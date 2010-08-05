@@ -27,7 +27,7 @@ def get_random_hermitian(basis):
 	sum = matrixify(numpy.zeros([d,d]))
 	
 	for k,v in basis.items_minus_identity():
-		print str(k) + " => " + str(v)
+		#print str(k) + " => " + str(v)
 		sum = sum + (components[k] * basis.get(k).matrix)
 	#print str(sum)
 		
@@ -37,7 +37,7 @@ def get_random_hermitian(basis):
 
 ##############################################################################
 def exp_hermitian_to_unitary(matrix_H, angle, basis):
-	print "exp_hermitian_to_unitary angle= " + str(angle)
+	#print "exp_hermitian_to_unitary angle= " + str(angle)
 	(matrix_V, matrix_W) = diagonalize(matrix_H, basis)
 	Udiag = matrix_exp_diag(-1j*angle*matrix_W)
 	assert_matrix_unitary(Udiag)
@@ -67,7 +67,7 @@ def matrix_from_components(components, basis):
 	d = basis.d
 	sum = matrixify(numpy.zeros([d,d]))
 	for k,v in components.items():
-		print str(k) + " => " + str(v)
+		#print str(k) + " => " + str(v)
 		sum = sum + (v * basis.get(k).matrix)
 	#print str(sum)
 	return sum
@@ -79,3 +79,17 @@ def axis_to_unitary(axis_components, angle, basis):
 	matrix_H = matrix_from_components(axis_components, basis)
 	matrix_U = exp_hermitian_to_unitary(matrix_H, angle, basis)
 	return matrix_U
+	
+##############################################################################
+def get_random_axis(basis):
+	for k,v in basis.items_minus_identity():
+		components[k] = random.random()
+		
+	norm = scipy.linalg.norm(components.values())
+
+	for k in components:
+		components[k] /= norm
+		
+	# Check that we have actually normalized this vector
+	assert_approx_equals(scipy.linalg.norm(components.values()), 1)
+	return components

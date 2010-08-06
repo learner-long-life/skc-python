@@ -39,9 +39,9 @@ def create_test_case(d):
 			# Get a random Hermitian
 			(H, components) = get_random_hermitian(self.basis)
 			
-			U = exp_hermitian_to_unitary(H, math.pi/2, self.basis)
+			#U = exp_hermitian_to_unitary(H, math.pi/2, self.basis)
 			#print "U(pi/2)= " + str(U)
-			assert_matrix_unitary(U)
+			#assert_matrix_unitary(U)
 			angle = random.random() * math.pi
 			U = exp_hermitian_to_unitary(H, angle, self.basis)
 			#print "U("+str(angle)+")= " + str(U)

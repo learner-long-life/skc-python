@@ -66,6 +66,7 @@ def create_basis_test_case(basis):
 					assert_approx_equals(inner_product, 0)
 	return TestBasis
 
+##############################################################################
 def get_suite():
 	suite = unittest.TestSuite()
 	
@@ -88,7 +89,8 @@ def get_suite():
 		suite.addTest(suite_U)
 		
 	return suite
-	
+
+##############################################################################
 if (__name__ == '__main__'):
 	suite = get_suite()
 	unittest.TextTestRunner(verbosity=3).run(suite)

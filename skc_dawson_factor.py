@@ -46,7 +46,7 @@ def find_similarity_matrix(matrix_A, matrix_B, basis):
 	# Occasionally the lengths of these vectors will drift, so renormalize here
 	angle_s = math.acos(ab_dot_product / (norm_a * norm_b))
 	
-	assert((angle_s > -PI_HALF) and (angle_s < PI_HALF))
+	assert((angle_s > 0) and (angle_s < PI))
 	for i in range(len(vector_s)):
 		vector_s[i] /= norm_s
 

@@ -51,10 +51,11 @@ def exp_hermitian_to_unitary(matrix_H, angle, basis):
 # from the given Hermitian basis, and exponentiating it.
 # Return the unitary matrix and its original Hermitian components
 # This works for general SU(d), where d is given by the hermitian basis.
-def get_random_unitary(basis_H):
+def get_random_unitary(basis_H, angle_lower=-PI_HALF, angle_upper=PI_HALF):
 	(matrix_H, components_H) = get_random_hermitian(basis_H)
-	# Choose a random angle between -pi and pi
-	angle = (random.random() * math.pi) - (math.pi/2)
+	# Choose a random angle between the angle_lower and angle_upper
+	angle_range = angle_upper - angle_lower
+	angle = (random.random() * angle_range) + angle_lower
 	
 	matrix_U = exp_hermitian_to_unitary(matrix_H, angle, basis_H)
 	return (matrix_U, components_H, angle)

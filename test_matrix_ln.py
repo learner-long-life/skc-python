@@ -59,7 +59,7 @@ def test_decomposing_unitary(d):
 	assert_approx_equals(norm2, 1)
 		
 	for key in components2.keys():
-		print str(key)
+		#print str(key)
 		#print "  actual= " + str(components[key])
 		#print "  comput= " + str(components2[key])
 		ratio = abs(components[key]) / abs(components2[key])

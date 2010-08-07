@@ -245,3 +245,13 @@ def matrix_inner_product(matrix_A, matrix_B):
 	# Now the array_X look like array([a,b,c,d])
 	# Now we can just do normal vector inner product
 	return numpy.dot(array_A, array_B)
+
+##############################################################################
+# Convert x,y,z 3D Cartesians coordinates to a dictionary of components
+# from the Hermitian (Gell-Mann) basis for SU(2)
+def cart3d_to_h2(x, y, z):
+	components = {}
+	components[('f',(1,2))] = x
+	components[('f',(2,1))] = y
+	components[('h',(2,2))] = z
+	return components

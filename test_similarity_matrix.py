@@ -53,9 +53,9 @@ def test_similarity(matrix_U1, matrix_U2, basis):
 #############################################################################
 # Some definitions common to all the tests below
 B2 = get_hermitian_basis(d=2)
-x_axis = {('f',(1,2)): 1, ('f',(2,1)): 0, ('h',(2,2)): 0}
-y_axis = {('f',(1,2)): 0, ('f',(2,1)): 1, ('h',(2,2)): 0}
-z_axis = {('f',(1,2)): 0, ('f',(2,1)): 0, ('h',(2,2)): 1}
+x_axis = cart3d_to_h2(x=1,y=0,z=0)
+y_axis = cart3d_to_h2(x=0,y=1,z=0)
+z_axis = cart3d_to_h2(x=0,y=0,z=1)
 
 #############################################################################
 # Start with something easy, which we've verified with Chris's C++ compiler

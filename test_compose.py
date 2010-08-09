@@ -4,6 +4,7 @@ from skc_operator import *
 from skc_utils import *
 from skc_basis import *
 from skc_compose import *
+from skc_decompose import *
 
 import random
 import unittest
@@ -46,6 +47,15 @@ def create_test_case(d):
 			U = exp_hermitian_to_unitary(H, angle, self.basis)
 			#print "U("+str(angle)+")= " + str(U)
 			assert_matrix_unitary(U)
+			
+		def test_axis_roundtrip(self):
+			(matrix_U, components, angle) = get_random_unitary(self.basis)
+			(components2, K, matrix_H) = unitary_to_axis(matrix_U, self.basis)
+			matrix_U2 = axis_to_unitary(components2, K/2.0, self.basis)
+			fowler_dist = fowler_distance(matrix_U, matrix_U2)
+			assert_approx_equals_tolerance(fowler_dist, 0, TOLERANCE10)
+			trace_dist = trace_distance(matrix_U, matrix_U2)
+			assert_approx_equals(trace_dist, 0)
 
 	return TestComposeCase
 

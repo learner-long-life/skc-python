@@ -47,8 +47,9 @@ def test_similarity(matrix_U1, matrix_U2, basis):
 	
 	assert_matrix_unitary(matrix_S)
 	
-	matrix_S_S_dag = matrix_S * matrix_S.H
-	assert_matrices_approx_equal(matrix_S_S_dag, basis.identity.matrix, trace_distance)
+	#matrix_S_S_dag = matrix_S * matrix_S.H
+	#assert_matrices_approx_equal(matrix_S_S_dag, basis.identity.matrix, trace_distance)
+	return matrix_S
 
 #############################################################################
 # Some definitions common to all the tests below
@@ -70,7 +71,11 @@ def test_x_pi_z_pi():
 	
 	#print "======================"
 	#print "SIMILARITY(X pi, Z pi)"
-	test_similarity(unitary_U1, unitary_U2, B2)
+	matrix_S = test_similarity(unitary_U1, unitary_U2, B2)
+	matrix_S_true = numpy.matrix([
+		[ 0.70710678+0.j, -0.70710678+0.j],
+		[ 0.70710678+0.j,  0.70710678+0.j]])
+	assert_matrices_approx_equal(matrix_S, matrix_S_true, trace_distance)
 
 #############################################################################
 # Start with something easy, which we've verified with Chris's C++ compiler
@@ -85,7 +90,11 @@ def test_x_pi_y_pi():
 	
 	#print "======================"
 	#print "SIMILARITY(X pi, Y pi)"
-	test_similarity(unitary_U1, unitary_U2, B2)
+	matrix_S = test_similarity(unitary_U1, unitary_U2, B2)
+	matrix_S_true = numpy.matrix([
+		[ 0.70710678+0.70710678j,  0.00000000+0.j        ],
+		[ 0.00000000+0.j,          0.70710678-0.70710678j]])
+	assert_matrices_approx_equal(matrix_S, matrix_S_true, trace_distance)
 
 #############################################################################
 # Test something more complicated
@@ -100,7 +109,11 @@ def test_x_pi_12_y_pi_12():
 	
 	#print "====="
 	#print "SIMILARITY(X pi/12, Y pi/12)"
-	test_similarity(unitary_U, unitary_U2, B2)
+	matrix_S = test_similarity(unitary_U, unitary_U2, B2)
+	matrix_S_true = numpy.matrix([
+		[ 0.70710678+0.70710678j,  0.00000000+0.j        ],
+ 		[ 0.00000000+0.j,          0.70710678-0.70710678j]])
+	assert_matrices_approx_equal(matrix_S, matrix_S_true, trace_distance) 		
 
 ##############################################################################
 def create_test_case(d):

@@ -254,4 +254,7 @@ def cart3d_to_h2(x, y, z):
 	components[('f',(1,2))] = x
 	components[('f',(2,1))] = y
 	components[('h',(2,2))] = z
+	norm = scipy.linalg.norm(components.values())
+	for k,v in components.items():
+		components[k] /= norm
 	return components

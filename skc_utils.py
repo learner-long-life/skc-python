@@ -19,6 +19,8 @@ TOLERANCE8 = 1e-8
 TOLERANCE9 = 1e-7
 TOLERANCE10 = 1e-6
 
+TOLERANCE_GREATER_THAN = 1e4
+
 PI = math.pi
 PI_HALF = math.pi / 2
 
@@ -66,15 +68,27 @@ def fowler_distance(matrix_A, matrix_B):
 	return math.sqrt(numpy.abs(frac))
 
 ##############################################################################
-def assert_approx_equals_tolerance(value1, value2, tolerance):
+def assert_approx_not_equals_tolerance(value1, value2, tolerance):
+	diff = abs(value1 - value2)
+	if (diff <= tolerance):
+		print "Diff: " + str(diff)
+	assert(diff > tolerance)
+
+##############################################################################
+def assert_approx_equals_tolerance(value1, value2, tolerance, message=""):
 	diff = abs(value1 - value2)
 	if (diff >= tolerance):
+		print message
 		print "Diff: " + str(diff)
 	assert(diff < tolerance)
 	
 ##############################################################################
-def assert_approx_equals(value1, value2):
-	assert_approx_equals_tolerance(value1, value2, TOLERANCE2)
+def assert_approx_equals(value1, value2, message=""):
+	assert_approx_equals_tolerance(value1, value2, TOLERANCE2, message)
+
+##############################################################################
+def assert_approx_not_equals(value1, value2):
+	assert_approx_not_equals_tolerance(value1, value2, TOLERANCE2)
 	
 ##############################################################################
 def approx_equals(value1, value2):

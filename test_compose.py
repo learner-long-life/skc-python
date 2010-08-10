@@ -36,6 +36,7 @@ def create_test_case(d):
 		def setUp(self):
 			self.basis = get_hermitian_basis(d=2)
 
+		######################################################################
 		def test_compose(self):
 			# Get a random Hermitian
 			(H, components) = get_random_hermitian(self.basis)
@@ -48,6 +49,7 @@ def create_test_case(d):
 			#print "U("+str(angle)+")= " + str(U)
 			assert_matrix_unitary(U)
 			
+		######################################################################
 		# Test whether reversing the sign of the angle for the same axis
 		# results in the adjoint of a unitary
 		def test_unitary_reverse_angle(self):
@@ -59,6 +61,7 @@ def create_test_case(d):
 			assert_matrices_approx_equal(U_Udag, self.basis.identity.matrix,
 				trace_distance)
 
+		######################################################################
 		# Test whether reversing the sign of the hermitian for the same angle
 		# results in the adjoint of a unitary
 		def test_unitary_reverse_hermitian(self):
@@ -70,6 +73,7 @@ def create_test_case(d):
 			assert_matrices_approx_equal(U_Udag, self.basis.identity.matrix,
 				trace_distance)
 
+		######################################################################
 		# Test that reversing the sign of the Hermitian
 		# gives you a non-equal matrix
 		def test_unitary_reverse_hermitian(self):
@@ -80,6 +84,7 @@ def create_test_case(d):
 			dist = trace_distance(U, Udag)
 			assert_approx_not_equals(dist, 0)
 			
+		######################################################################
 		def test_axis_roundtrip(self):
 			(matrix_U, components, angle) = get_random_unitary(self.basis)
 			#print "components= " + str(components)
@@ -103,7 +108,7 @@ def create_test_case(d):
 				# We just want to check that magnitude and sign is conserved
 				assert_approx_equals(v, numpy.sign(angle)*components[k], message=msg)
 
-
+		######################################################################
 		def test_axis_recover_sign(self):
 			(matrix_U, components, angle) = get_random_unitary(self.basis)
 			print "components= " + str(components)
@@ -116,13 +121,13 @@ def create_test_case(d):
 			components2[random_key] *= -1
 			#print "components2= " + str(components2)
 
-			matrix_U2 = axis_to_unitary(components2, K2, self.basis)
+			matrix_U2 = axis_to_unitary(components2, K2/2.0, self.basis)
 			(components3, K3, matrix_H3) = unitary_to_axis(matrix_U2, self.basis)
 			#print "components3= " + str(components3)
 
 			msg = "angles not equal: K3=" + \
 				str(K3) + " angle=" + str(angle)
-			assert_approx_equals_tolerance(K3/4.0, abs(angle), TOLERANCE10,
+			assert_approx_equals_tolerance(K3/2.0, abs(angle), TOLERANCE10,
 				msg)
 			
 			angle_sign = numpy.sign(angle)

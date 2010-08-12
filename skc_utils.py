@@ -95,12 +95,6 @@ def approx_equals(value1, value2):
 	return (abs(value1 - value2) < TOLERANCE)
 
 ##############################################################################
-# Convert a unitary rotation to hyperspherical coordinates
-# \psi, \theta, \phi on surface of a 3-sphere
-def unitary_to_hspherical(U):
-	raise RuntimeError("Not implemented for SU(D) yet!")
-	
-##############################################################################
 # This is plagiarized from Chris Dawson's su2.cpp: su2::mat_to_cart3
 def matrix_to_unitary4d(matrix_U):
 

@@ -3,6 +3,7 @@ from skc_decompose import *
 from skc_operator import *
 from skc_utils import *
 from skc_basis import *
+from skc_group_factor import *
 
 import math
 
@@ -26,9 +27,10 @@ W = matrix_W
 V_dag = numpy.transpose(numpy.conjugate(V))
 W_dag = numpy.transpose(numpy.conjugate(W))
 
-delta = V * W * V_dag * W_dag
+delta = get_group_commutator(matrix_V, matrix_W) #V * W * V_dag * W_dag
 
 print "Delta= " + str(delta)
 
 distance = trace_distance(delta, matrix_U)
 print "Trace Distance(Delta, U): " + str(distance)
+assert_approx_equals(distance, 0)

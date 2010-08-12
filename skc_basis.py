@@ -4,6 +4,7 @@
 
 import numpy
 import math
+import random
 
 from skc_utils import *
 from skc_operator import *
@@ -257,4 +258,16 @@ def cart3d_to_h2(x, y, z):
 	norm = scipy.linalg.norm(components.values())
 	for k,v in components.items():
 		components[k] /= norm
+	return components
+	
+##############################################################################
+# Currently this is only used in Dawson factoring to supply a random axis
+def pick_random_axis(basis):
+	(random_k,random_v) = random.choice(basis.items_minus_identity())
+	components = {}
+	for k,v in basis.items_minus_identity():
+		if (k == random_k):
+			components[k] = 1
+		else:
+			components[k] = 0
 	return components

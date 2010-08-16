@@ -271,3 +271,8 @@ def pick_random_axis(basis):
 		else:
 			components[k] = 0
 	return components
+
+##############################################################################
+# Module constants
+H2 = get_hermitian_basis(d=2)
+X_AXIS = cart3d_to_h2(x=1, y=0, z=0)

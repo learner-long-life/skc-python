@@ -8,7 +8,9 @@ from skc_utils import *
 ##############################################################################
 # Diagonalize the given unitary in the given basis, returning the
 # diagonal matrix W, and the unitary matrix V such that
-# V^{-1} * U * V = W
+#  V * U * V^{-1} = W
+# Equivalently, you can call conjugate(W, V) to recover U
+# from skc_group_factor
 def diagonalize(matrix_U, basis):
 	d = basis.d
 	#print "U= " + str(matrix_U)

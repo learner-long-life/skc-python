@@ -6,6 +6,7 @@ import time
 from skc.basic_approx import *
 
 def generate_approxes(filename, iset, l0, simplify_rules):
+
 	f = open(filename, 'wb')
 	
 	# Write the basic instruction set to a file
@@ -13,8 +14,12 @@ def generate_approxes(filename, iset, l0, simplify_rules):
 	
 	# Do it!
 	basic_approxes = []
-	
+
+	# Start the generate timer
 	begin_time = time.time()
+	
+	# Set the rules for simpifying later basic approxes
+	init_simplify_engine(simplify_rules)
 	
 	# Collect all basic approxes for sequences of length 1 up to length l_0
 	for i in range(l0):

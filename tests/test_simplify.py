@@ -16,14 +16,23 @@ class TestSimplifyEngine(unittest.TestCase):
 	def test_simplest(self):
 		# This should simplify to I
 		sequence = ['I', 'I']
-		new_sequence = self.engine.simplify(sequence)
+		(global_obtains, new_sequence) = self.engine.simplify(sequence)
 		self.assertEqual(new_sequence, ['I'])
+		self.assertEqual(global_obtains, True)
 
 	def test_repeated_identity(self):
 		# This should simplify to I
 		sequence = ['I', 'I', 'I', 'I', 'I']
-		new_sequence = self.engine.simplify(sequence)
+		(global_obtains, new_sequence) = self.engine.simplify(sequence)
 		self.assertEqual(new_sequence, ['I'])
+		self.assertEqual(global_obtains, True)
+
+	def test_none_obtains(self):
+		# This should simplify to I
+		sequence = ['X', 'I', 'Y', 'I', 'Z']
+		(global_obtains, new_sequence) = self.engine.simplify(sequence)
+		self.assertEqual(new_sequence, ['X', 'I', 'Y', 'I', 'Z'])
+		self.assertEqual(global_obtains, False)
 
 ##############################################################################
 class TestDoubleIdentityRule(unittest.TestCase):

@@ -28,15 +28,18 @@ class SimplifyEngine:
 		while (long_enough and (len(scratch) < self.min_arg_count)):
 			long_enough = self.transfer_to_scratch(sequence, scratch)
 		if (long_enough):
-			assert(len(scratch) == self.min_arg_count)
+			assert(len(scratch) >= self.min_arg_count)
 
 	#-------------------------------------------------------------------------
 	# The main simplify method called from outside				
 	def simplify(self, sequence):
+		# Make a defensive copy
+		sequence = list(sequence)
 		scratch_sequence = []
 		 # This is reset in every iteration below, just declare it here so
 		 # we have access to it in the first While test (kludge!)
 		global_obtains = False
+		global_any_obtains = False
 		
 		while ((len(sequence) > 0) or global_obtains):
 			global_obtains = False
@@ -66,6 +69,7 @@ class SimplifyEngine:
 						if (obtains):
 							any_obtains = True
 							global_obtains = True
+							global_any_obtains = True
 			#print "global_obtains= " + str(global_obtains)
 						
 			# Now the scratch sequence is stale, so let's get a fresh op
@@ -75,7 +79,7 @@ class SimplifyEngine:
 			#print str(sequence)
 			
 		# The old sequence should be empty, return the scratch
-		return scratch_sequence
+		return (global_any_obtains, scratch_sequence)
 					
 ##############################################################################
 class SimplifyRule:

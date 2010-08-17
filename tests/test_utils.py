@@ -21,7 +21,13 @@ class TestUtils(unittest.TestCase):
 		c_approx = 4*math.sqrt(2)
 		eps_0 = 1.0 / 33.0
 		n = n_from_eps(eps=0.0001, c_approx=c_approx, eps_0=eps_0)
-		self.assertEqual(n, 13, "level of recursion was: " + str(n) + " but should be 13")
+		msg = "level of recursion was: " + str(n) + " but should be 13"
+		self.assertEqual(n, 13, msg)
+		
+	def test_direct_sum(self):
+		A = matrix_direct_sum(numpy.matrix(1), numpy.matrix(2))
+		B = matrixify([[1,0],[0,2]])
+		assert_matrices_approx_equal(A, B, trace_distance)
 		
 def get_suite():
 	suite = unittest.TestSuite()

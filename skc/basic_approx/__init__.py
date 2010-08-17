@@ -1,4 +1,16 @@
 from skc_operator import *
+from skc_simplify import *
+
+import types
+
+# Global simplify engine
+simplify_engine = None
+
+# Initialize the global simplify engine with the given rules for all
+# subsequent generation of basic approximations
+def init_simplify_engine(rules):
+	global simplify_engine
+	simplify_engine = SimplifyEngine(rules)
 
 ##############################################################################
 # Recursive helper method which enumerates all possible combinations of operators, given
@@ -9,17 +21,41 @@ from skc_operator import *
 # Returns - list of matrices consisting of enumerated sequences
 def gen_basic_approx_helper(prefix, iset, ops_left):
 	sequences = []
+	total_length = 0
 	if (ops_left <= 1):
 		# Base case, enumerate over iset, appending one op to end of prefix each
+		# We only need to simplify here
+		#if (type(prefix) != types.NoneType):
+		#	print "prefix= " + str(prefix.ancestors)
 		for insn in iset:
-			sequences.append(prefix.multiply(insn))
+			if (type(prefix) == types.NoneType):
+				new_op = insn
+			else:
+				new_op = prefix.add_ancestors(insn)
+			(simplify_length, new_sequence) = \
+				simplify_engine.simplify(new_op.ancestors)
+			# This is a hard-coded hack for now
+			if (new_sequence == ['I']):
+				continue
+			#print str(new_sequence)
+			#if (simplify_length > 0):
+			#	print str(simplify_length) + " simplified"
+			new_op.ancestors = new_sequence
+			sequences.append(new_op)
+			total_length += len(new_op.ancestors) 
 	else:
 		# Recursive case, generate sequences based on a particular choice of next instruction
 		for insn in iset:
-			new_prefix = prefix.multiply(insn)
-			prefix_sequences = gen_basic_approx_helper(new_prefix, iset, ops_left-1)
+			if (type(prefix) == types.NoneType):
+				new_prefix = insn
+			else:
+				new_prefix = prefix.add_ancestors(insn)
+			(prefix_sequences, total_length_i) = \
+				gen_basic_approx_helper(new_prefix, iset, ops_left-1)
 			sequences.extend(prefix_sequences)
-	return sequences
+			total_length += total_length_i
+	
+	return (sequences, total_length)
 
 ##############################################################################
 ## Generate table of basic approximations as preprocessing
@@ -49,9 +85,10 @@ def gen_basic_approx(iset, l_0):
 	identity = get_identity(d)
 			
 	# Initial call to recursive helper method, with identity matrix as prefix
-	sequences = gen_basic_approx_helper(identity, iset, l_0)
+	(sequences, total_length) = gen_basic_approx_helper(None, iset, l_0)
 
 	print str(len(sequences)) + " sequences generated"
+	print str(total_length) + " total length generated"
 
 	return sequences
 

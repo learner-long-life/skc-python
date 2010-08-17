@@ -111,8 +111,8 @@ def create_test_case(d):
 		######################################################################
 		def test_axis_recover_sign(self):
 			(matrix_U, components, angle) = get_random_unitary(self.basis)
-			print "components= " + str(components)
-			print "angle= " + str(angle)
+			#print "components= " + str(components)
+			#print "angle= " + str(angle)
 			(components2, K2, matrix_H2) = unitary_to_axis(matrix_U, self.basis)
 			#print "components2= " + str(components2)
 			

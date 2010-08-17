@@ -17,6 +17,12 @@ class TestUtils(unittest.TestCase):
 		dist = fowler_distance(H2, H.matrix)
 		assert_approx_equals_tolerance(dist, 0, TOLERANCE9)
 		
+	def test_n_from_epsilon(self):
+		c_approx = 4*math.sqrt(2)
+		eps_0 = 1.0 / 33.0
+		n = n_from_eps(eps=0.0001, c_approx=c_approx, eps_0=eps_0)
+		self.assertEqual(n, 13, "level of recursion was: " + str(n) + " but should be 13")
+		
 def get_suite():
 	suite = unittest.TestSuite()
 	loader = unittest.TestLoader()

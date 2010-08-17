@@ -159,13 +159,14 @@ def matrix_direct_sum(matrix_A, matrix_B):
   return direct_sum
   
 ##############################################################################
-def assert_matrices_approx_equal(matrix1, matrix2, distance):
+def assert_matrices_approx_equal(matrix1, matrix2, distance,
+		tolerance=TOLERANCE3):
 	dist = distance(matrix1, matrix2)
-	if (dist > TOLERANCE3):
+	if (dist > tolerance):
 		print "matrices not-equal"
 		print str(matrix1)
 		print str(matrix2)
-	assert_approx_equals(dist, 0)
+	assert_approx_equals(dist, 0, tolerance)
 	
 ##############################################################################
 def assert_matrix_hermitian(matrix):
@@ -173,12 +174,12 @@ def assert_matrix_hermitian(matrix):
 	assert_matrices_approx_equal(matrix, adjoint, trace_distance)
 	
 ##############################################################################
-def assert_matrix_unitary(matrix):
+def assert_matrix_unitary(matrix, tolerance=TOLERANCE3):
 	d = matrix.shape[0]
 	identity = matrixify(numpy.eye(d))
 	adjoint = numpy.transpose(numpy.conjugate(matrix))
 	product = matrix * adjoint	
-	assert_matrices_approx_equal(product, identity, trace_distance)
+	assert_matrices_approx_equal(product, identity, trace_distance, tolerance)
 
 ##############################################################################
 def assert_matrix_nonempty(matrix):	
@@ -211,3 +212,15 @@ def matrix_exp(matrix, steps):
 		sum = sum + (product / denom)
 		#print "sum= " + str(product / denom)
 	return sum
+	
+##############################################################################
+def n_from_eps(eps, eps_0, c_approx):
+	c_approx_sq = c_approx**2
+	denom = numpy.log(3.0/2)
+	eps_c_approx_sq = eps * c_approx_sq
+	eps_0_c_approx_sq = eps_0 * c_approx_sq
+	eps_ln = numpy.log(1.0 / eps_c_approx_sq)
+	eps_0_ln = numpy.log(1.0 / eps_0_c_approx_sq)
+	big_ln = numpy.log(eps_ln / eps_0_ln) / denom
+	return numpy.ceil(big_ln)
+	

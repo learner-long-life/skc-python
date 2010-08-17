@@ -3,6 +3,7 @@ from skc_dawson import *
 from skc_utils import *
 from skc_compose import *
 from skc_basis import *
+from skc_group_factor import *
 import math
 
 d = 4
@@ -23,6 +24,8 @@ set_basis(basis)
 #X_AXIS = cart3d_to_h2(x=1, y=0, z=0)
 random_axis = pick_random_axis(basis)
 set_axis(random_axis)
+
+set_factor_method(aram_diagonal_factor)
 
 Uop = Operator(name="U", matrix=matrix_U)
 

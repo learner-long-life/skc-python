@@ -33,6 +33,9 @@ class SimplifyEngine:
 	#-------------------------------------------------------------------------
 	# The main simplify method called from outside				
 	def simplify(self, sequence):
+		# Get the length of the old sequence for comparison below
+		simplify_length = len(sequence)
+
 		# Make a defensive copy
 		sequence = list(sequence)
 		scratch_sequence = []
@@ -78,8 +81,10 @@ class SimplifyEngine:
 			#print str(scratch_sequence)
 			#print str(sequence)
 			
+		simplify_length -= len(scratch_sequence)
+			
 		# The old sequence should be empty, return the scratch
-		return (global_any_obtains, scratch_sequence)
+		return (simplify_length, scratch_sequence)
 					
 ##############################################################################
 class SimplifyRule:
@@ -155,5 +160,24 @@ class DoubleIdentityRule(SimplifyRule):
 			activated = True
 			C = 'I'
 			
+		return (activated, C)
+
+##############################################################################
+class IdentityRule(SimplifyRule):
+	def __init__(self):
+		SimplifyRule.__init__(self, "I*Q = Q", 2)
+		
+	def __simplify__(self, arg_list):
+		activated = False
+		A = arg_list[0]
+		B = arg_list[1]
+		C = ''
+		if (A=='I'):
+			activated = True
+			C = B
+		elif (B=='I'):
+			activated = True
+			C = A
+
 		return (activated, C)
 	

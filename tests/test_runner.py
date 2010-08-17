@@ -7,6 +7,7 @@ import test_matrix_ln
 import test_diagonalize
 import test_compose
 import test_similarity_matrix
+import test_simplify
 
 loader = unittest.TestLoader()
 
@@ -18,4 +19,5 @@ suite.addTest(test_matrix_ln.get_suite())
 suite.addTest(test_diagonalize.get_suite())
 suite.addTest(test_compose.get_suite())
 suite.addTest(test_similarity_matrix.get_suite())
+suite.addTest(test_simplify.get_suite())
 unittest.TextTestRunner(verbosity=2).run(suite)

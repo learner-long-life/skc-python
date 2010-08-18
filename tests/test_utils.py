@@ -1,5 +1,5 @@
-from skc_operator import *
-from skc_utils import *
+from skc.operator import *
+from skc.utils import *
 
 import math
 import unittest
@@ -28,7 +28,8 @@ class TestUtils(unittest.TestCase):
 		A = matrix_direct_sum(numpy.matrix(1), numpy.matrix(2))
 		B = matrixify([[1,0],[0,2]])
 		assert_matrices_approx_equal(A, B, trace_distance)
-		
+
+##############################################################################
 def get_suite():
 	suite = unittest.TestSuite()
 	loader = unittest.TestLoader()
@@ -36,6 +37,7 @@ def get_suite():
 	suite.addTest(suite1)
 	return suite
 
+##############################################################################
 if (__name__ == '__main__'):
 	suite = get_suite()
 	unittest.TextTestRunner(verbosity=3).run(suite)

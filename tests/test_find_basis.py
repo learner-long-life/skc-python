@@ -4,9 +4,9 @@ import numpy
 import unittest
 import types
 
-from skc_utils import *
-from skc_operator import *
-from skc_basis import *
+from skc.utils import *
+from skc.operator import *
+from skc.basis import *
 
 # Maximum dimension (2**D) to test
 D=3

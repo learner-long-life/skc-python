@@ -2,10 +2,10 @@
 # By constructing diagonal form explicitly from eigenvalues
 import scipy.linalg
 
-from skc_utils import *
-from skc_basis import *
-from skc_operator import *
-from skc_compose import *
+from skc.utils import *
+from skc.basis import *
+from skc.operator import *
+from skc.compose import *
 import unittest
 
 # Maximum dimension (2**D) to test

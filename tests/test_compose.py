@@ -1,10 +1,10 @@
 # Testing that we can compose a unitary by exponentiating a hermitian
 
-from skc_operator import *
-from skc_utils import *
-from skc_basis import *
-from skc_compose import *
-from skc_decompose import *
+from skc.operator import *
+from skc.utils import *
+from skc.basis import *
+from skc.compose import *
+from skc.decompose import *
 
 import random
 import unittest

@@ -2,7 +2,7 @@ from skc_diagonalize import *
 from skc_basis import *
 from skc_utils import *
 from skc_compose import *
-from skc_decompose import *
+from skc.decompose import *
 
 import numpy
 import math

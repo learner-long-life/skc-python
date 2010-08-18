@@ -1,4 +1,4 @@
-from skc_operator import *
+from skc.operator import *
 
 import math
 import unittest

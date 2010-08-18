@@ -21,15 +21,11 @@ print "U= " + str(matrix_U)
 load_basic_approxes("basic_approxes_su4.pickle")
 set_basis(basis)
 
-#X_AXIS = cart3d_to_h2(x=1, y=0, z=0)
-random_axis = pick_random_axis(basis)
-set_axis(random_axis)
-
 set_factor_method(aram_diagonal_factor)
 
 Uop = Operator(name="U", matrix=matrix_U)
 
-Un = solovay_kitaev(Uop, 3)
+Un = solovay_kitaev(Uop, 2, 'U', '')
 print "Approximated U: " + str(Un)
 
 print "Un= " + str(Un.matrix)

@@ -1,5 +1,5 @@
 from skc_basis import *
-from skc_decompose import *
+from skc.decompose import *
 from skc_compose import *
 from skc_utils import *
 

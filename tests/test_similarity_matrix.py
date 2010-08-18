@@ -1,7 +1,7 @@
-from skc_dawson_factor import *
-from skc_basis import *
-from skc_operator import *
-from skc_utils import *
+from skc.dawson_factor import *
+from skc.basis import *
+from skc.operator import *
+from skc.utils import *
 
 import math
 import unittest

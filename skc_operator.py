@@ -20,8 +20,20 @@ class Operator:
 		return "Operator: " + str(self.name) + "\n" \
 			"  Ancestors: " + str(self.ancestors)
 			
+	def __hash__(self):
+		hash = self.name.__hash__()
+		for ancestor in self.ancestors:
+			hash *= ancestor.__hash__()
+		return hash
+			
 	def print_matrix(self):
 			print "  Matrix: " + str(self.matrix)
+			
+	def add_ancestors(self, other, new_name=""):
+		# Append new ancestors to the end of self
+		new_ancestors = self.ancestors + other.ancestors
+		new_op = Operator(new_name, None, new_ancestors)
+		return new_op
 
 	def multiply(self, other, new_name=""):
 		new_matrix = self.matrix * other.matrix
@@ -30,7 +42,7 @@ class Operator:
 		return new_op
 		
 	def dagger(self):
-		new_matrix = numpy.transpose(numpy.conjugate(self.matrix))
+		new_matrix = self.matrix.H
 		reversed_ancestors = list(self.ancestors)
 		reversed_ancestors.reverse()
 		new_ancestors = []
@@ -45,11 +57,13 @@ class Operator:
 		return Operator(new_name, new_matrix, new_ancestors)
 		
 	def __eq__(self, other):
-		return (self.name == other.name)
+		return (self.name == other.name) and (self.ancestors == other.ancestors)
 
 def get_identity(d):
 	return Operator("I", matrixify(numpy.eye(d)))
 
+##############################################################################
+# SU(2) constants
 # 2x2 identity matrix
 I2 = get_identity(2)
 

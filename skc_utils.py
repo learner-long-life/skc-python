@@ -1,8 +1,5 @@
 # Utilities for Solovay-Kitaev compiler
 
-#from skc_operator import *
-from skc_types import *
-
 import math
 import numpy
 import random

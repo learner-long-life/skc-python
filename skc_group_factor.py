@@ -28,7 +28,8 @@ def create_diagonal_submatrices(matrix_D, d):
 		submatrix_D = matrixify([[a11,a12],[a21,a22]])
 		print "D_"+str(i)+ "= " + str(submatrix_D)
 		submatrices_D.append(submatrix_D)
-		assert_matrix_unitary(submatrix_D)
+		# These don't have to be unitary, but we'd like them close to I
+		#assert_matrix_unitary(submatrix_D)
 	return submatrices_D
 
 ##############################################################################

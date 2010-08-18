@@ -29,11 +29,11 @@ def diagonalize(matrix_U, basis):
 	#print "V= " + str(matrix_V)
 	
 	# Get adjoint
-	matrix_V_dag = numpy.transpose(numpy.conjugate(matrix_V))
+	#matrix_V_dag = numpy.transpose(numpy.conjugate(matrix_V))
 	
 	# Eigenvector matrix should be unitary if we are to have
-	# V be its own inverse
-	assert_matrix_unitary(matrix_V)
+	# V dagger be the same as V inverse
+	assert_matrix_unitary(matrix_V, TOLERANCE6)
 	
 	# Multiply V^{-1} * U * V to diagonalize
 	matrix_W = matrix_V.I * matrix_U * matrix_V

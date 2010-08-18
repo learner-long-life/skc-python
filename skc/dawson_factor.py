@@ -1,6 +1,6 @@
-from skc_utils import *
-from skc_decompose import *
-from skc_basis import *
+from skc.utils import *
+from skc.decompose import *
+from skc.basis import *
 
 import math
 import numpy

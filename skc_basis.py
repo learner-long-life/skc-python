@@ -6,8 +6,8 @@ import numpy
 import math
 import random
 
-from skc_utils import *
-from skc_operator import *
+from skc.utils import *
+from skc.operator import *
 
 ##############################################################################
 # A complete basis for d x d matrices.

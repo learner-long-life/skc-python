@@ -19,19 +19,14 @@ TOLERANCE10 = 1e-6
 TOLERANCE_GREATER_THAN = 1e4
 
 PI = math.pi
-PI_HALF = math.pi / 2
+PI_HALF = PI / 2
+THREE_PI_HALF = 1.5*PI
+TWO_PI = 2*PI
 
 ##############################################################################
 def matrixify(array):
 	return numpy.matrix(array, dtype=numpy.complex)
 
-##############################################################################
-# The following functions (get_eigenvalues and trace_distance) are plagiarized from
-# Chris Dawson's su2.cpp
-# matrix_M is currently assumed to be a 2x2 matrix
-def get_eigenvalues(M):
-	raise RuntimeError("Not implemented for SU(D) yet!")
-	
 ##############################################################################
 def trace_norm(M):
 	trace = numpy.trace(M * M.H)
@@ -65,19 +60,25 @@ def fowler_distance(matrix_A, matrix_B):
 	return math.sqrt(numpy.abs(frac))
 
 ##############################################################################
+def assert_and_print(bool_condition, arg_to_stringify, msg_prefix=""):
+	if (not bool_condition):
+		print "[ASSERTION FAILED] " + msg_prefix + ": " + str(arg_to_stringify)
+	assert(bool_condition)
+
+##############################################################################
 def assert_approx_not_equals_tolerance(value1, value2, tolerance):
 	diff = abs(value1 - value2)
-	if (diff <= tolerance):
-		print "Diff: " + str(diff)
-	assert(diff > tolerance)
+	assert_and_print(diff >= tolerance, diff)
+	
+##############################################################################
+def assert_in_range(value, lower, upper, message=""):
+	assert_and_print(lower < value, value, "Lower bound= " + str(lower))
+	assert_and_print(value < upper, value, "Upper bound= " + str(upper))
 
 ##############################################################################
 def assert_approx_equals_tolerance(value1, value2, tolerance, message=""):
 	diff = abs(value1 - value2)
-	if (diff >= tolerance):
-		print message
-		print "Diff: " + str(diff)
-	assert(diff < tolerance)
+	assert_and_print(diff < tolerance, diff, message) 
 	
 ##############################################################################
 def assert_approx_equals(value1, value2, message=""):
@@ -86,6 +87,10 @@ def assert_approx_equals(value1, value2, message=""):
 ##############################################################################
 def assert_approx_not_equals(value1, value2):
 	assert_approx_not_equals_tolerance(value1, value2, TOLERANCE2)
+
+##############################################################################
+def approx_equals_tolerance(value1, value2, tolerance):
+	return (abs(value1 - value2) < tolerance)
 	
 ##############################################################################
 def approx_equals(value1, value2):
@@ -128,6 +133,7 @@ def matrix_to_unitary4d(matrix_U):
 def print_indented(message, depth):
 	print (" " * (depth * 2)) + message
 
+##############################################################################
 # Chain the tensor product of multiple operators
 def tensor_chain(op_vector):
 	if (len(op_vector) == 0):

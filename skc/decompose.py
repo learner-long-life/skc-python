@@ -1,7 +1,7 @@
 # Methods for decomposing unitaries
 
-from skc_diagonalize import *
-from skc_compose import *
+from skc.diagonalize import *
+from skc.compose import *
 
 ##############################################################################
 # Given a Hermitian matrix H which is the logarithm of the unitary U

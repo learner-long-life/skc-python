@@ -1,4 +1,4 @@
-from skc_simplify import *
+from skc.simplify import *
 
 import math
 import unittest

@@ -5,8 +5,8 @@ import random
 import scipy.linalg
 import numpy
 
-from skc_utils import *
-from skc_diagonalize import *
+from skc.utils import *
+from skc.diagonalize import *
 
 ##############################################################################
 def get_random_hermitian(basis):

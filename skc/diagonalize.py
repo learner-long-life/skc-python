@@ -3,7 +3,7 @@
 import scipy.linalg
 import numpy
 
-from skc_utils import *
+from skc.utils import *
 
 ##############################################################################
 # Diagonalize the given unitary in the given basis, returning the

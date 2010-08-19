@@ -1,7 +1,7 @@
-from skc_basis import *
+from skc.basis import *
 from skc.decompose import *
-from skc_compose import *
-from skc_utils import *
+from skc.compose import *
+from skc.utils import *
 
 import unittest
 

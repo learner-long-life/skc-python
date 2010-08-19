@@ -16,6 +16,12 @@ class TestOperator(unittest.TestCase):
 		self.assertNotEquals(hash2, hash3, msg)
 		msg = "hash(I2)= " + str(hash1) + " hash(T)= " + str(hash3)
 		self.assertNotEquals(hash1, hash3, msg)
+		
+	def test_ancestors_as_string(self):
+		op = Operator("", None)
+		op.ancestors = ['A', 'B', 'C']
+		string = op.ancestors_as_string()
+		self.assertEquals(string, "A-B-C", "Ancestor string incorrect " + string)
 
 ##############################################################################
 def get_suite():

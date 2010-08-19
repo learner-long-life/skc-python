@@ -34,6 +34,12 @@ class Operator:
 		new_ancestors = self.ancestors + other.ancestors
 		new_op = Operator(new_name, None, new_ancestors)
 		return new_op
+		
+	def ancestors_as_string(self):
+		string = self.ancestors[0]
+		for ancestor in self.ancestors[1:]:
+			string += "-" + ancestor
+		return string
 
 	def multiply(self, other, new_name=""):
 		new_matrix = self.matrix * other.matrix

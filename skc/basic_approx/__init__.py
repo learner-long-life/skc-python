@@ -1,5 +1,5 @@
-from skc_operator import *
-from skc_simplify import *
+from skc.operator import *
+from skc.simplify import *
 
 import types
 

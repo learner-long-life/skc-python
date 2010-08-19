@@ -1,7 +1,7 @@
-from skc_diagonalize import *
-from skc_basis import *
-from skc_utils import *
-from skc_compose import *
+from skc.diagonalize import *
+from skc.basis import *
+from skc.utils import *
+from skc.compose import *
 from skc.decompose import *
 
 import numpy

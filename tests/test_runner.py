@@ -9,6 +9,7 @@ import test_compose
 import test_similarity_matrix
 import test_simplify
 import test_operator
+import test_hypersphere
 
 loader = unittest.TestLoader()
 
@@ -22,4 +23,5 @@ suite.addTest(test_compose.get_suite())
 suite.addTest(test_similarity_matrix.get_suite())
 suite.addTest(test_simplify.get_suite())
 suite.addTest(test_operator.get_suite())
+suite.addTest(test_hypersphere.get_suite())
 unittest.TextTestRunner(verbosity=2).run(suite)

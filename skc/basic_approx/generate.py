@@ -1,16 +1,16 @@
 import math
 import numpy
-import cPickle
 import time
 
-from skc.basic_approx import *
+import skc.basic_approx
 
 def generate_approxes(filename, iset, l0, simplify_rules):
 
-	f = open(filename, 'wb')
-	
-	# Write the basic instruction set to a file
-	cPickle.dump(iset, f, cPickle.HIGHEST_PROTOCOL)
+	counter = 0
+
+	skc.basic_approx.dump_to_file(iset, filename + "-iset")
+
+	skc.basic_approx.filename_prefix = filename
 	
 	# Do it!
 	basic_approxes = []
@@ -19,32 +19,23 @@ def generate_approxes(filename, iset, l0, simplify_rules):
 	begin_time = time.time()
 	
 	# Set the rules for simpifying later basic approxes
-	init_simplify_engine(simplify_rules)
+	skc.basic_approx.init_simplify_engine(simplify_rules)
 	
 	# Collect all basic approxes for sequences of length 1 up to length l_0
 	for i in range(l0):
-		i_approxes = gen_basic_approx(iset, i+1)
+		i_approxes = skc.basic_approx.gen_basic_approx(iset, i+1)
+		
+		counter += len(i_approxes)
 		basic_approxes.extend(i_approxes)
-		print "Number of basic approximations so far: " + str(len(basic_approxes))
+		
+		# Do final chunking for this recursion level
+		if (len(basic_approxes) >= skc.basic_approx.chunk_size):
+			filename = filename_prefix + "-" + str(i)
+			skc.basic_approx.dump_to_file(basic_approxes, filename)
+			# Garbage collect the sequences
+			basic_approxes = []
+
+		print "Number of basic approximations so far: " + str(counter)
 	
 	gen_time = time.time() - begin_time
 	print "Generation time: " + str(gen_time)
-	
-	print "Writing basic approximations to file: " + filename
-	
-	begin_time = time.time()
-	
-	# Remove all the matrices to see if this saves us space
-	# Yes, this saves us 85.3% (16M vs. 109M) for SU4
-	for op in basic_approxes:
-		del op.matrix
-	
-	# Write the approximations
-	cPickle.dump(basic_approxes, f, cPickle.HIGHEST_PROTOCOL)
-	
-	write_time = time.time() - begin_time
-	print "Writing time: " + str(write_time)
-	
-	print "Writing done, closing file."
-	
-	f.close()

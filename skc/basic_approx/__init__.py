@@ -2,15 +2,42 @@ from skc.operator import *
 from skc.simplify import *
 
 import types
+import time
+import cPickle
 
-# Global simplify engine
-simplify_engine = None
+# Global variables
+simplify_engine = None  # simplify engine
+chunk_size = 1000000    # number of sequences to chunk together into a file
+filename_prefix = ""    # prefix for pickled generated sequences
 
 # Initialize the global simplify engine with the given rules for all
 # subsequent generation of basic approximations
 def init_simplify_engine(rules):
 	global simplify_engine
 	simplify_engine = SimplifyEngine(rules)
+
+##############################################################################
+def dump_to_file(object, filename):
+	f = open(filename+".pickle", 'wb')
+	
+	begin_time = time.time()
+	
+	# Write the approximations
+	cPickle.dump(object, f, cPickle.HIGHEST_PROTOCOL)
+	
+	write_time = time.time() - begin_time
+	print "Writing time: " + str(write_time)
+	
+	print "Writing done, closing file."
+	
+	f.close()
+
+##############################################################################
+def chunk_sequences(sequences):
+	# Do chunking if necessary
+	if (len(sequences) >= chunk_size):
+		filename = filename_prefix + prefix.ancestors_as_string()
+		dump_sequences_to_file(prefix_sequences, filename)
 
 ##############################################################################
 # Recursive helper method which enumerates all possible combinations of operators, given
@@ -22,6 +49,8 @@ def init_simplify_engine(rules):
 def gen_basic_approx_helper(prefix, iset, ops_left):
 	sequences = []
 	total_length = 0
+	sequence_count = 0
+		
 	if (ops_left <= 1):
 		# Base case, enumerate over iset, appending one op to end of prefix each
 		# We only need to simplify here
@@ -42,6 +71,7 @@ def gen_basic_approx_helper(prefix, iset, ops_left):
 			#	print str(simplify_length) + " simplified"
 			new_op.ancestors = new_sequence
 			sequences.append(new_op)
+			sequence_count += 1
 			total_length += len(new_op.ancestors) 
 	else:
 		# Recursive case, generate sequences based on a particular choice of next instruction
@@ -50,12 +80,24 @@ def gen_basic_approx_helper(prefix, iset, ops_left):
 				new_prefix = insn
 			else:
 				new_prefix = prefix.add_ancestors(insn)
-			(prefix_sequences, total_length_i) = \
+			(prefix_sequences, sequence_count, total_length_i) = \
 				gen_basic_approx_helper(new_prefix, iset, ops_left-1)
+			
 			sequences.extend(prefix_sequences)
+			sequence_len = len(sequences)
+			sequence_count += sequence_len
+			
+			# Do chunking if necessary
+			if (sequence_len >= chunk_size):
+				chunk_prefix = sequences[sequence_len-1].ancestors_as_string()
+				filename = filename_prefix + "-" + chunk_prefix
+				dump_to_file(prefix_sequences, filename)
+				# Garbage collect the sequences
+				sequences = []				
+				
 			total_length += total_length_i
 	
-	return (sequences, total_length)
+	return (sequences, sequence_count, total_length)
 
 ##############################################################################
 ## Generate table of basic approximations as preprocessing
@@ -82,12 +124,11 @@ def gen_basic_approx(iset, l_0):
 		if (i_shape != first_shape):
 			print "Operator " + str(i) + "'s shape does not match first shape: " + str(i_shape)
 	
-	identity = get_identity(d)
-			
+	file_counter = 0
 	# Initial call to recursive helper method, with identity matrix as prefix
-	(sequences, total_length) = gen_basic_approx_helper(None, iset, l_0)
+	(sequences, sequence_count, total_length) = gen_basic_approx_helper(None, iset, l_0)
 
-	print str(len(sequences)) + " sequences generated"
+	print str(sequence_count) + " sequences generated"
 	print str(total_length) + " total length generated"
 
 	return sequences

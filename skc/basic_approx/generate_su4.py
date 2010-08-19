@@ -1,7 +1,9 @@
 from skc.basic_approx.generate import *
 
-from skc_operator import *
-from skc_simplify import *
+from skc.operator import *
+from skc.simplify import *
+
+import skc.basic_approx
 
 import numpy
 
@@ -44,4 +46,4 @@ simplify_rules = [
 	]
 #simplify_rules = []
 
-generate_approxes("basic_approxes_su4.pickle", iset4, 8, simplify_rules)
+generate_approxes("pickles/basic_approxes_su4", iset4, 7, simplify_rules)

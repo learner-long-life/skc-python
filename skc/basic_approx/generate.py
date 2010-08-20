@@ -92,7 +92,8 @@ def basic_approxes(l_0, settings):
 		# generation that we can use
 		already_exists = generation_file_exists(i+1)
 		if (already_exists):
-			# Yay! less work for us. Assume it's correct.
+			print "Yay! Generation " + str(i+1) + " file already found, skipping"
+			# less work for us. Assume it's correct.
 			continue
 		# Generate a new generation using the previous one as prefixes
 		# we pass in the generation num of the one that just passed

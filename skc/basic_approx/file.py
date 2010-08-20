@@ -67,6 +67,14 @@ def chunk_sequences_to_file():
 		save_chunk_to_file()
 
 ##############################################################################
+# Returns true if a file already exists for the given generation number
+def generation_file_exists(generation_num):
+	filename_pattern = filename_prefix + "-g" + str(generation_num) \
+		+ "*.pickle"
+	filenames = glob.glob(filename_pattern)
+	return (len(filenames) > 0)
+
+##############################################################################
 def map_to_file_chunks(generation_num, callback):
 	filename_pattern = filename_prefix + "-g" + str(generation_num) \
 		+ "*.pickle"

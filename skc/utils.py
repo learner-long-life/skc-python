@@ -60,6 +60,15 @@ def fowler_distance(matrix_A, matrix_B):
 	return math.sqrt(numpy.abs(frac))
 
 ##############################################################################
+def list_as_string(list_A):
+	if (len(list_A) == 0):
+		return ""
+	string = list_A[0]
+	for ancestor in list_A[1:]:
+	       	string += "-" + ancestor
+	return string
+
+##############################################################################
 def assert_and_print(bool_condition, arg_to_stringify, msg_prefix=""):
 	if (not bool_condition):
 		print "[ASSERTION FAILED] " + msg_prefix + ": " + str(arg_to_stringify)

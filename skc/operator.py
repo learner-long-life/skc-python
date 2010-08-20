@@ -36,10 +36,7 @@ class Operator:
 		return new_op
 		
 	def ancestors_as_string(self):
-		string = self.ancestors[0]
-		for ancestor in self.ancestors[1:]:
-			string += "-" + ancestor
-		return string
+		return list_as_string(self.ancestors)
 
 	def multiply(self, other, new_name=""):
 		new_matrix = self.matrix * other.matrix

@@ -29,16 +29,16 @@ class TestSimplifyEngine(unittest.TestCase):
 
 	def test_identity(self):
 		# This should simplify QIQ to nothing
-		sequence = ['X', 'Q', 'I', 'Q', 'Z']
+		sequence = ['X', 'Z', 'Q', 'I', 'Q']
 		(simplify_length, new_sequence) = self.engine.simplify(sequence)
 		self.assertEqual(new_sequence, ['X', 'Z'])
 		self.assertEqual(simplify_length, 3)
 		
 	def test_double_q(self):
 		# This should simplify 3 Q's down to just Q
-		sequence = ['X', 'Q', 'Q', 'Q', 'Z']
+		sequence = ['X', 'Z', 'Q', 'Q', 'Q']
 		(simplify_length, new_sequence) = self.engine.simplify(sequence)
-		self.assertEqual(new_sequence, ['X', 'Q', 'Z'])
+		self.assertEqual(new_sequence, ['X', 'Z', 'Q'])
 		self.assertEqual(simplify_length, 2)
 		
 	def test_none_obtains(self):

@@ -46,4 +46,4 @@ simplify_rules = [
 	]
 #simplify_rules = []
 
-generate_approxes("pickles/basic_approxes_su4", iset4, 7, simplify_rules)
+generate_approxes("pickles/basic_approxes_su4", iset4, 10, simplify_rules)

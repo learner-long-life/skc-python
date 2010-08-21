@@ -31,6 +31,7 @@ def read_from_file(filename):
 	#filename = filename_prefix + "-" + filename_suffix +".pickle"
 	f = open(filename, 'rb')
 	
+	print "Reading from: " + filename
 	begin_time = time.time()
 	
 	object = cPickle.load(f)
@@ -42,10 +43,13 @@ def read_from_file(filename):
 	return object
 
 ##############################################################################
-def dump_to_file(object, custom_filename=""):
+def dump_to_file(object, custom_filename="", final=False):
+	final_filename = ""
 	if (len(custom_filename) > 0):
 		custom_filename = "-" + custom_filename
-	filename = filename_prefix + "-" + filename_suffix + custom_filename + ".pickle"
+	if (final):
+		final_filename = "-final"
+	filename = filename_prefix + "-" + filename_suffix + custom_filename + final_filename + ".pickle"
 	f = open(filename, 'wb')
 	
 	begin_time = time.time()
@@ -68,9 +72,9 @@ def chunk_sequences_to_file():
 
 ##############################################################################
 # Returns true if a file already exists for the given generation number
-def generation_file_exists(generation_num):
+def final_generation_file_exists(generation_num):
 	filename_pattern = filename_prefix + "-g" + str(generation_num) \
-		+ "*.pickle"
+		+ "-final.pickle"
 	filenames = glob.glob(filename_pattern)
 	return (len(filenames) > 0)
 
@@ -90,13 +94,13 @@ def map_to_file_chunks(generation_num, callback):
 		
 ##############################################################################
 # Force saving global sequences to file, without checking chunksize
-def save_chunk_to_file():
+def save_chunk_to_file(final=False):
 	global file_counter
 	print "save_chunk_to_file"
 	#for sequence in global_sequences:
 	#	print str(sequence)
 	assert(len(global_sequences) > 0)
-	dump_to_file(global_sequences, str(file_counter))
+	dump_to_file(global_sequences, str(file_counter), final)
 	file_counter += 1
 	reset_global_sequences()
 

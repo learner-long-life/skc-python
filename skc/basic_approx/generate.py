@@ -63,7 +63,7 @@ def gen_basic_approx_generation(prefixes):
 			append_sequence(new_op)
 			
 	# Dump whatever's left this generation into one last file
-	save_chunk_to_file()
+	save_chunk_to_file(final=True)
 
 ##############################################################################
 ## Generate table of basic approximations as preprocessing
@@ -90,7 +90,7 @@ def basic_approxes(l_0, settings):
 		
 		# Check whether an generation file already exists for the current
 		# generation that we can use
-		already_exists = generation_file_exists(i+1)
+		already_exists = final_generation_file_exists(i+1)
 		if (already_exists):
 			print "Yay! Generation " + str(i+1) + " file already found, skipping"
 			# less work for us. Assume it's correct.

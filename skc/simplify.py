@@ -41,15 +41,16 @@ class SimplifyEngine:
 		scratch_sequence = []
 		 # This is reset in every iteration below, just declare it here so
 		 # we have access to it in the first While test (kludge!)
-		global_obtains = False
-		global_any_obtains = False
+		global_obtains = True # just for the first time
+		#global_any_obtains = False
+
+		# Initially fill scratch sequence
+		self.fill_scratch_sequence(sequence, scratch_sequence)
 		
-		while ((len(sequence) > 0) or global_obtains):
+		# We should only continue while at least one of the rule obtainsS
+		while (global_obtains and (len(scratch_sequence) >= self.min_arg_count)):
 			global_obtains = False
 			#print "Entering while loop!"
-		
-			# Prefill the scratch space to min_arg_count
-			self.fill_scratch_sequence(sequence, scratch_sequence)
 		
 			# Apply the rules repeatedly in scratch_space until none of them
 			# obtain
@@ -64,7 +65,7 @@ class SimplifyEngine:
 					# If we don't obtain or have enough arguments for this
 					# rule, skip it
 					while ((first_time or obtains) and
-					       (len(scratch_sequence) >= rule.arg_count)):
+						   (len(scratch_sequence) >= rule.arg_count)):
 						first_time = False
 						# Set the outer condition to repeat all rules later
 						# Repeat this rule now, in case it obtains again
@@ -72,19 +73,28 @@ class SimplifyEngine:
 						if (obtains):
 							any_obtains = True
 							global_obtains = True
-							global_any_obtains = True
+							#global_any_obtains = True
+			if (global_obtains):
+				# if any rule obtained, refill the scratch sequence
+				self.fill_scratch_sequence(sequence, scratch_sequence)
+		
+
 			#print "global_obtains= " + str(global_obtains)
 						
 			# Now the scratch sequence is stale, so let's get a fresh op
-			self.transfer_to_scratch(sequence, scratch_sequence)
+			#self.transfer_to_scratch(sequence, scratch_sequence)
 			#print str(global_obtains)
 			#print str(scratch_sequence)
 			#print str(sequence)
-			
-		simplify_length -= len(scratch_sequence)
+		
+		# Append the rest of the old sequence to the scratch sequence now
+		#print "sequence= " + str(sequence)
+		sequence.extend(scratch_sequence)
+		simplify_length -= len(sequence)
+		assert(simplify_length >= 0)
 			
 		# The old sequence should be empty, return the scratch
-		return (simplify_length, scratch_sequence)
+		return (simplify_length, sequence)
 					
 ##############################################################################
 class SimplifyRule:

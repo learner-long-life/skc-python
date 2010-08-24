@@ -37,6 +37,14 @@ class Operator:
 		
 	def ancestors_as_string(self):
 		return list_as_string(self.ancestors)
+	
+	# Sets the matrix of this operator by its ancestors taken from a set
+	# iset - a dictionary of labels to operators for the instruction set
+	# identity - the identity to start multiplication with
+	def matrix_from_ancestors(self, iset, identity):
+		self.matrix = identity.matrix
+		for ancestor in self.ancestors:
+			self.matrix *= iset[ancestor].matrix
 
 	def multiply(self, other, new_name=""):
 		new_matrix = self.matrix * other.matrix

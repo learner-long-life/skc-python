@@ -5,11 +5,18 @@ class BasicApproxSettings:
 	def __init__(self):
 		self.identity = None
 		self.iset = []
+		self.iset_dict = {}
 		self.simplify_engine = None  # simplify engine
 
 	def set_iset(self, new_iset):
 		self.check_iset(new_iset)
 		self.iset = new_iset
+		for insn in new_iset:
+			self.iset_dict[insn.name] = insn
+			
+	def set_identity(self, new_identity):
+		self.identity = new_identity
+		self.iset_dict[new_identity.name] = new_identity
 
 	def print_iset(self):
 		print "INSTRUCTION SET"
@@ -39,6 +46,9 @@ class BasicApproxSettings:
 			if (i_shape != first_shape):
 				msg = "Operator " + str(i) + "'s shape does not match first shape: " + str(i_shape)
 				raise RuntimeError(msg)
+			
+	def simplify(self, sequence):
+		return self.simplify_engine.simplify(sequence)
 
 	# Initialize the global simplify engine with the given rules for all
 	# subsequent generation of basic approximations

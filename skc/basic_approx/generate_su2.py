@@ -4,8 +4,6 @@ from skc.operator import *
 from skc.simplify import *
 from skc.basic_approx import *
 
-import skc.basic_approx
-
 import numpy
 
 iset2 = [H, T, T_inv]

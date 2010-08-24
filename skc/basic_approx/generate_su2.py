@@ -29,6 +29,6 @@ set_filename_prefix("pickles/basic_approxes_su2")
 settings = BasicApproxSettings()
 settings.set_iset(iset2)
 settings.init_simplify_engine(simplify_rules)
-settings.identity = I2
+settings.set_identity(I2)
 
 generate_approxes(10, settings)

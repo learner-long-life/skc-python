@@ -28,16 +28,18 @@ CNotd = Operator(name="CNd", matrix=CNot_matrix.H)
 
 iset4 = [H1, H2, T1, T2, Tinv1, Tinv2, CNot, CNotd]
 
+H4 = get_hermitian_basis(d=4)
+
 for insn in iset4:
 	print str(insn)
 #iset = [H, T, T_inv]
 
 # Simplifying rules
-identity_rule = IdentityRule()
-double_H1_rule = DoubleIdentityRule('H1')
-double_H2_rule = DoubleIdentityRule('H2')
-double_CN_rule = DoubleIdentityRule('CN')
-adjoint_rule = AdjointRule()
+identity_rule = IdentityRule(H4.identity.name)
+double_H1_rule = DoubleIdentityRule(symbol='H1', id_sym=H4.identity.name)
+double_H2_rule = DoubleIdentityRule(symbol='H2', id_sym=H4.identity.name)
+double_CN_rule = DoubleIdentityRule(symbol='CN', id_sym=H4.identity.name)
+adjoint_rule = AdjointRule(id_sym=H4.identity.name)
 
 simplify_rules = [
 	identity_rule,
@@ -48,13 +50,11 @@ simplify_rules = [
 	]
 #simplify_rules = []
 
-H4 = get_hermitian_basis(d=4)
-
 set_filename_prefix("pickles/su4/basic_approxes")
 
 settings = BasicApproxSettings()
 settings.set_iset(iset4)
 settings.init_simplify_engine(simplify_rules)
-settings.identity = H4.identity
+settings.set_identity(H4.identity)
 
 generate_approxes(6, settings)

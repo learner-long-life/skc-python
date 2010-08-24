@@ -112,8 +112,9 @@ class SimplifyRule:
 ##############################################################################
 class AdjointRule(SimplifyRule):
 
-	def __init__(self):
+	def __init__(self, id_sym='I'):
 		SimplifyRule.__init__(self, "Q*Q\dagger = I", 2)
+		self.id_sym = id_sym
 		
 	def __simplify__(self, arg_list):
 		# This rule starts out not obtaining by default
@@ -133,22 +134,23 @@ class AdjointRule(SimplifyRule):
 		B0n1 = B[0:len_B1]
 		if ((A == B0n1) and (Bn == 'd')):
 			# Test if B is the adjoint of A
-			C = 'I'
+			C = self.id_sym
 			#print "A= " + str(A)
 			#print "B0n1= " + str(B0n1)
 			#print "Bn= " + str(Bn)
 			activated = True
 		elif ((B == A0n1) and (An == 'd')):
 			# Test if A is the adjoint of B
-			C = 'I'
+			C = self.id_sym
 			activated = True
 			
 		return (activated, C) 
 		
 ##############################################################################
 class DoubleIdentityRule(SimplifyRule):
-	def __init__(self, symbol):
+	def __init__(self, symbol, id_sym = 'I'):
 		self.symbol = symbol
+		self.id_sym = id_sym
 		SimplifyRule.__init__(self, "Q*Q = I", 2)
 		
 	def __simplify__(self, arg_list):
@@ -158,26 +160,26 @@ class DoubleIdentityRule(SimplifyRule):
 		C = ''
 		if ((A==self.symbol) and (B==self.symbol)):
 			activated = True
-			C = 'I'
+			C = self.id_sym
 			
 		return (activated, C)
 
 ##############################################################################
 class IdentityRule(SimplifyRule):
-	def __init__(self):
+	def __init__(self, id_sym='I'):
 		SimplifyRule.__init__(self, "I*Q = Q", 2)
+		self.id_sym = id_sym
 		
 	def __simplify__(self, arg_list):
 		activated = False
 		A = arg_list[0]
 		B = arg_list[1]
 		C = ''
-		if (A=='I'):
+		if (A==self.id_sym):
 			activated = True
 			C = B
-		elif (B=='I'):
+		elif (B==self.id_sym):
 			activated = True
 			C = A
 
 		return (activated, C)
-	

@@ -8,8 +8,7 @@ from skc.utils import *
 
 ##############################################################################
 # GLOBAL VARIABLES
-simplify_engine = None
-iset = None
+settings = None
 
 ##############################################################################
 # Recursive helper method which enumerates all possible combinations of
@@ -28,20 +27,20 @@ def gen_basic_approx_generation(prefixes):
 	# otherwise returns False, so that we generate from this
 	# (now simplified) prefix
 	def simplify_new(new_op):
-		# Simplify the prefix before we generaet from it
+		# Simplify the prefix before we generate from it
 		# since we may already have done it this level
 		(simplify_length, simplified_sequence) = \
-			simplify_engine.simplify(new_op.ancestors)
+			settings.simplify(new_op.ancestors)
 		#if (simplify_length > 0):
 		#		print "Simplified " + str(new_op.ancestors) + \
 		#			" to " + str(simplified_sequence)
 		ancestor_string = list_as_string(simplified_sequence)
 		already_done = (ancestor_string in simplified_ancestors)
 		new_op.ancestors = simplified_sequence
+		new_op.matrix_from_ancestors(settings.iset_dict, settings.identity)
 		#if (already_done):
 		#	print "Already did " + str(ancestor_string)
-		# This is a hard-coded hack for now
-		if (simplified_sequence == ['I'] or already_done):
+		if (simplified_sequence == [settings.identity.name] or already_done):
 			return True
 		# Add this to our list so we don't add it again this generation
 		simplified_ancestors.append(ancestor_string)
@@ -49,10 +48,10 @@ def gen_basic_approx_generation(prefixes):
 	#------------------------------------------------------------------------
 	for prefix in prefixes:
 		# Enumerate over iset, appending one op to end of prefix each
-		for insn in iset:
+		for insn in settings.iset:
 			new_op = prefix.add_ancestors(insn)
 			(simplify_length, new_sequence) = \
-				simplify_engine.simplify(new_op.ancestors)
+				settings.simplify(new_op.ancestors)
 			
 			already_done = simplify_new(new_op)
 			if (already_done):
@@ -68,11 +67,10 @@ def gen_basic_approx_generation(prefixes):
 ##############################################################################
 ## Generate table of basic approximations as preprocessing
 # l_0 - fixed length of sequences to generate for preprocessing table
-def basic_approxes(l_0, settings):
-	global simplify_engine, iset
+def basic_approxes(l_0, new_settings):
+	global settings
 	
-	iset = settings.iset
-	simplify_engine = settings.simplify_engine
+	settings = new_settings
 
 	reset_global_stats()
 	

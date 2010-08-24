@@ -2,8 +2,8 @@ from skc.basic_approx.generate import *
 
 from skc.operator import *
 from skc.simplify import *
-
-import skc.basic_approx
+from skc.basis import *
+from skc.basic_approx import *
 
 import numpy
 
@@ -36,14 +36,25 @@ for insn in iset4:
 identity_rule = IdentityRule()
 double_H1_rule = DoubleIdentityRule('H1')
 double_H2_rule = DoubleIdentityRule('H2')
+double_CN_rule = DoubleIdentityRule('CN')
 adjoint_rule = AdjointRule()
 
 simplify_rules = [
 	identity_rule,
 	double_H1_rule,
 	double_H2_rule,
+	double_CN_rule,
 	adjoint_rule
 	]
 #simplify_rules = []
 
-generate_approxes("pickles/basic_approxes_su4", iset4, 7, simplify_rules)
+H4 = get_hermitian_basis(d=4)
+
+set_filename_prefix("pickles/su4/basic_approxes")
+
+settings = BasicApproxSettings()
+settings.set_iset(iset4)
+settings.init_simplify_engine(simplify_rules)
+settings.identity = H4.identity
+
+generate_approxes(6, settings)

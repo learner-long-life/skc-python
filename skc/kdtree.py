@@ -22,10 +22,11 @@ def square_distance(pointA, pointB):
 	return distance
 
 class KDTreeNode():
-	def __init__(self, op, left, right):
+	def __init__(self, op, left, right, axis):
 		self.left = left
 		self.right = right
 		self.op = op
+		self.axis = axis
 	
 	def is_leaf(self):
 		return (self.left == None and self.right == None)
@@ -84,7 +85,7 @@ class KDTree():
 
 			# select axis based on depth so that axis cycles through all valid values
 			axis = depth % len(op_list[0].dimensions) # assumes all points have the same dimension
-			print "axis= " + str(axis)
+			#print "axis= " + str(axis)
 
 			# sort point list and choose median as pivot point,
 			# TODO: better selection method, linear-time selection, distribution
@@ -92,11 +93,12 @@ class KDTree():
 			median = len(op_list)/2 # choose median
 
 			# create node and recursively construct subtrees
-			print "median= " + str(median)
-			print "point_list[median]= " + str(op_list[median])
+			#print "median= " + str(median)
+			#print "point[median].dims= " + str(op_list[median].dimensions)
 			node = KDTreeNode(op=op_list[median],
 							  left=build_kdtree(op_list[0:median], depth+1),
-							  right=build_kdtree(op_list[median+1:], depth+1))
+							  right=build_kdtree(op_list[median+1:], depth+1),
+							  axis = axis)
 			return node
 		
 		self.root_node = build_kdtree(data, depth=0)

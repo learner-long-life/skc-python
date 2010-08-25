@@ -174,11 +174,8 @@ def matrix_direct_sum(matrix_A, matrix_B):
 def assert_matrices_approx_equal(matrix1, matrix2, distance,
 		tolerance=TOLERANCE3):
 	dist = distance(matrix1, matrix2)
-	if (dist > tolerance):
-		print "matrices not-equal"
-		print str(matrix1)
-		print str(matrix2)
-	assert_approx_equals(dist, 0, tolerance)
+	msg = "Matrices not-equal:\n" + str(matrix1) + "\n" +  str(matrix2)
+	assert_approx_equals_tolerance(dist, 0, tolerance=tolerance, message=msg)
 	
 ##############################################################################
 def assert_matrix_hermitian(matrix):

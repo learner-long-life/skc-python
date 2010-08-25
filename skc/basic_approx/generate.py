@@ -58,7 +58,7 @@ def gen_basic_approx_generation(prefixes):
 		if (sign < 0):
 			for i in range(len(dimensions)):
 				dimensions[i] *= -1
-			K = -K + TWO_PI
+			K = -K
 		dimensions.append(K) # add the angle as the last component
 		new_op.dimensions = dimensions
 

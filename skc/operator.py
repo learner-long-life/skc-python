@@ -41,10 +41,12 @@ class Operator:
 	# Sets the matrix of this operator by its ancestors taken from a set
 	# iset - a dictionary of labels to operators for the instruction set
 	# identity - the identity to start multiplication with
-	def matrix_from_ancestors(self, iset, identity):
+	def matrix_from_ancestors(self, iset_dict, identity):
 		self.matrix = identity.matrix
 		for ancestor in self.ancestors:
-			self.matrix *= iset[ancestor].matrix
+			self.matrix = self.matrix * iset_dict[ancestor].matrix
+		#print "MATRIX IS UNITARY"
+		assert_matrix_unitary(self.matrix)
 
 	def multiply(self, other, new_name=""):
 		new_matrix = self.matrix * other.matrix
@@ -99,4 +101,4 @@ T_matrix = matrixify([[1, 0], [0, numpy.exp(1j * math.pi / 4)]])
 T = Operator("T", T_matrix)
 
 # Inverse pi/8 gate
-T_inv = Operator("T_inv", T.matrix.I)
+T_inv = Operator("Td", T.matrix.I)

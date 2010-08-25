@@ -15,6 +15,7 @@ global_count = 0
 global_length = 0
 generation_count = 0
 generation_length = 0
+print_update_interval = 1000
 
 ##############################################################################
 def set_filename_prefix(new_filename_prefix):
@@ -148,7 +149,6 @@ def update_stats(sequence_count, total_length):
 # garbage collect / reset the global sequences
 def append_sequences(new_sequences):
 	global global_sequences
-	global sequence_count
 	global total_length
 	
 	global_sequences.extend(new_sequences)
@@ -156,7 +156,10 @@ def append_sequences(new_sequences):
 	total_length = 0
 	for sequence in new_sequences:
 		total_length += len(sequence.ancestors)
-	update_stats(len(new_sequences), total_length) 
+	update_stats(len(new_sequences), total_length)
+	
+	if ((generation_count % print_update_interval) == 0):
+		print str(generation_count) + " sequences\b"
 
 	chunk_sequences_to_file()
 
@@ -168,5 +171,8 @@ def append_sequence(new_op):
 	
 	global_sequences.append(new_op)
 	update_stats(1, len(new_op.ancestors))
+
+	if ((generation_count % print_update_interval) == 0):
+		print str(generation_count) + " sequences\b"
 	
 	chunk_sequences_to_file()

@@ -13,6 +13,21 @@ Matej Drame [matej.drame@gmail.com]
 __version__ = "1r11.1.2010"
 __all__ = ["KDTree"]
 
+from skc.utils import *
+
+EPS_0 = 1.0 / 32
+
+def eliminate_close_children(op_list, this_matrix):
+	while (op_list):
+		child = op_list[0]
+		dist = fowler_distance(child.matrix, this_matrix)
+		if (dist < EPS_0):
+			print "eliminated with dist= " + str(dist)
+			del op_list[0]
+		else:
+			break
+	return op_list
+
 def square_distance(pointA, pointB):
 	# squared euclidean distance
 	distance = 0
@@ -22,11 +37,10 @@ def square_distance(pointA, pointB):
 	return distance
 
 class KDTreeNode():
-	def __init__(self, op, left, right, axis):
+	def __init__(self, op, left, right):
 		self.left = left
 		self.right = right
 		self.op = op
-		self.axis = axis
 	
 	def is_leaf(self):
 		return (self.left == None and self.right == None)
@@ -47,7 +61,7 @@ class KDTreeNeighbours():
 			self.largest_distance = self.current_best[self.t-1][1]
 
 	def add(self, op):
-		sd = square_distance(op.dimensions, self.query_op.dimensions)
+		sd = fowler_distance(op.matrix, self.query_op.matrix)
 		# run through current_best, try to find appropriate place
 		for i, e in enumerate(self.current_best):
 			if i == self.t:
@@ -91,17 +105,26 @@ class KDTree():
 			# TODO: better selection method, linear-time selection, distribution
 			op_list.sort(key=lambda point: point.dimensions[axis])
 			median = len(op_list)/2 # choose median
-
+			op_this = op_list[median]
 			# create node and recursively construct subtrees
 			#print "median= " + str(median)
 			#print "point[median].dims= " + str(op_list[median].dimensions)
-			node = KDTreeNode(op=op_list[median],
-							  left=build_kdtree(op_list[0:median], depth+1),
-							  right=build_kdtree(op_list[median+1:], depth+1),
-							  axis = axis)
+			# Eliminate children that are closer than eps_0
+			left_children = op_list[0:median] #eliminate_close_children(op_list[0:median], op_this.matrix)
+			right_children = op_list[median+1:] #eliminate_close_children(op_list[median+1:], op_this.matrix)
+			node = KDTreeNode(op=op_this,
+							  left=build_kdtree(new_left, depth+1),
+							  right=build_kdtree(new_right, depth+1)
+							  )
+			node.axis = axis
+			node.dim_val = op_this.dimensions[axis]
 			return node
 		
 		self.root_node = build_kdtree(data, depth=0)
+		# Garbage collect the dimensions, since we don't need them anymore
+		# although we will if we want to combine trees later
+		for op in data:
+			del op.dimensions
 	
 	@staticmethod
 	def construct_from_data(data):
@@ -135,7 +158,7 @@ class KDTree():
 			
 			# compare query_point and point of current node in selected dimension
 			# and figure out which subtree is farther than the other
-			if query_op.dimensions[axis] < node.op.dimensions[axis]:
+			if query_op.dimensions[axis] < node.dim_val:
 				near_subtree = node.left
 				far_subtree = node.right
 			else:
@@ -152,7 +175,7 @@ class KDTree():
 			
 			# check whether there could be any points on the other side of the
 			# splitting plane that are closer to the query point than the current best
-			if (node.op.dimensions[axis] - query_op.dimensions[axis])**2 < best_neighbours.largest_distance:
+			if (node.dim_val - query_op.dimensions[axis])**2 < best_neighbours.largest_distance:
 				#statistics['far_search'] += 1
 				nn_search(far_subtree, query_op, t, depth+1, best_neighbours)
 			

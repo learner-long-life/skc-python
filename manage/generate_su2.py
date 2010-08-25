@@ -3,6 +3,7 @@ from skc.basic_approx.generate import *
 from skc.operator import *
 from skc.simplify import *
 from skc.basic_approx import *
+from skc.basis import *
 
 import numpy
 
@@ -24,11 +25,18 @@ simplify_rules = [
 	]
 #simplify_rules = []
 
-set_filename_prefix("pickles/basic_approxes_su2")
+H2 = get_hermitian_basis(d=2)
+
+print "BASIS H2"
+for (k,v) in H2.items_minus_identity():
+	print str(k) + " => " + str(v.matrix)
+
+set_filename_prefix("pickles/su2/gen")
 
 settings = BasicApproxSettings()
 settings.set_iset(iset2)
 settings.init_simplify_engine(simplify_rules)
 settings.set_identity(I2)
+settings.basis = H2
 
-generate_approxes(10, settings)
+generate_approxes(16, settings)

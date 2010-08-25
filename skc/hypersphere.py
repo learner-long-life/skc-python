@@ -37,7 +37,7 @@ def fix_last_hsphere_coord(product, c_n, c_n1):
 	# If sign(product) == sign(c_n1) == sign(c_n)
 	if (((product > 0) and (c_n1 > 0) and (c_n > 0)) or
 	    ((product < 0) and (c_n1 < 0) and (c_n < 0))):
-		assert_approx_equals(phi_n1_acos, phi_n1_asin)
+		assert_approx_equals_tolerance(phi_n1_acos, phi_n1_asin, TOLERANCE4)
 		assert_in_range(phi_n1_acos, 0, PI_HALF) # cos(\phi_n1) > 0
 		assert_in_range(phi_n1_asin, 0, PI_HALF) # sin(\phi_n1) > 0
 		# The angle is correct, we can return either one
@@ -63,7 +63,7 @@ def fix_last_hsphere_coord(product, c_n, c_n1):
 		assert_approx_equals(c_n, new_c_n)
 
 		# Sanity check that we have the same angle in both cases
-		assert_approx_equals(phi_n1_acos, phi_n1_asin)
+		assert_approx_equals_tolerance(phi_n1_acos, phi_n1_asin, TOLERANCE3)
 		return phi_n1_acos
 	#-------------------------------------------------------------------------
 	# CASE 2: \phi_{n-1} \in [PI_HALF, PI]
@@ -115,7 +115,7 @@ def fix_last_hsphere_coord(product, c_n, c_n1):
 # Convert hyperspherical coordinates in a certain basis to a unitary
 # Dual of unitary_to_hspherical below.
 def hspherical_to_unitary(hsphere_coords, basis):
-	print "**********************HSPHERICAL_TO_UNITARY"
+	#print "**********************HSPHERICAL_TO_UNITARY"
 
 	# For SU(d), we require (d^2) - 1 hyperspherical coordinates
 	d21 = (basis.d**2) - 1
@@ -132,7 +132,7 @@ def hspherical_to_unitary(hsphere_coords, basis):
 	 # This is the identity component, which we discard
 	cartesian_coords[0] = 1.0
 	
-	print "angle= " + str(angle)
+	#print "angle= " + str(angle)
 
 	# Flag that tells us whether to fill in cartesian coords
 	# for degenerate hspherical coords
@@ -142,7 +142,7 @@ def hspherical_to_unitary(hsphere_coords, basis):
 		# If the current hsphere coord is zero, then all other
 		# hsphere coords degenerate to zero, and we're done
 		if (approx_equals(hsphere_coords[i], 0)):
-			print "hsphere_coords["+str(i)+"] is zero, all others degenerate"
+			#print "hsphere_coords["+str(i)+"] is zero, all others degenerate"
 			for j in range(i+1,d21):
 				assert_approx_equals(0, hsphere_coords[j])
 			zero_from_now_on = True
@@ -151,22 +151,22 @@ def hspherical_to_unitary(hsphere_coords, basis):
 		# Find product of all previous sines of hsphere coords
 		product = 1
 		for j in range(0,i):
-			print "sin(hsphere_coords["+str(j)+"])= " + \
-				str(math.sin(hsphere_coords[j]))
+			#print "sin(hsphere_coords["+str(j)+"])= " + \
+			#	str(math.sin(hsphere_coords[j]))
 			product *= math.sin(hsphere_coords[j])
-		print "product of sines from 0 to " + str(i) + "= " + str(product)
-		print "hsphere_coord[" + str(i) + "]= " + str(hsphere_coords[i])
+		#print "product of sines from 0 to " + str(i) + "= " + str(product)
+		#print "hsphere_coord[" + str(i) + "]= " + str(hsphere_coords[i])
 		cartesian_coords[i] *= math.cos(hsphere_coords[i]) * product
-		print "cartesian_coord["+str(i)+"]= " + str(cartesian_coords[i])
+		#print "cartesian_coord["+str(i)+"]= " + str(cartesian_coords[i])
 		
 		# If this is the next to last hsphere_coord, take the last sine
 		if (i == (d21-1)):
 			cartesian_coords[d21] *= math.sin(hsphere_coords[d21-1])*product
-			print "cartesian_coord["+str(d21)+"]= " + str(cartesian_coords[d21])
+			#print "cartesian_coord["+str(d21)+"]= " + str(cartesian_coords[d21])
 		
 	components = basis.unsort_canonical_order(cartesian_coords[1:d2])
 	
-	print "axis= " + str(components)
+	#print "axis= " + str(components)
 	matrix_U2 = axis_to_unitary(components, angle, basis)		
 
 	return matrix_U2
@@ -175,13 +175,13 @@ def hspherical_to_unitary(hsphere_coords, basis):
 # Convert a unitary rotation to hyperspherical coordinates
 # Dual to hspherical_to_unitary above
 def unitary_to_hspherical(matrix_U, basis):
-	print "**********************UNITARY_TO_HSPHERICAL"
+	#print "**********************UNITARY_TO_HSPHERICAL"
 	(components, K, matrix_H) = unitary_to_axis(matrix_U, basis)
 	angle = K/2.0
 	
-	print "angle= " + str(angle)
+	#print "angle= " + str(angle)
 	ni = numpy.trace(matrix_U * basis.identity.matrix).real / basis.d
-	print "ni= " + str(ni)
+	#print "ni= " + str(ni)
 	
 	cartesian_coords = basis.sort_canonical_order(components)
 	
@@ -193,13 +193,13 @@ def unitary_to_hspherical(matrix_U, basis):
 	
 	# Initialize hsphere_coords to contain initial angle
 	hsphere_coords = [angle]
-	print "hsphere_coords[0]= " + str(hsphere_coords[0])
+	#print "hsphere_coords[0]= " + str(hsphere_coords[0])
 	
 	for i in range(1,d21):
 		# If the current hsphere coord is zero, then all other
 		# hsphere coords degenerate to zero, and we're done
 		if (approx_equals(hsphere_coords[i-1], 0)):
-			print "hsphere_coords["+str(i)+"] is zero, all others degenerate"
+			#print "hsphere_coords["+str(i)+"] is zero, all others degenerate"
 			for j in range(i,d21):
 				hsphere_coords.append(0)
 			break
@@ -211,29 +211,21 @@ def unitary_to_hspherical(matrix_U, basis):
 		# Find product of all previous sines of hsphere coords
 		product = 1
 		for j in range(0,i):
-			print "sin(hsphere_coords["+str(j)+"])= " + \
-				str(math.sin(hsphere_coords[j]))
+			#print "sin(hsphere_coords["+str(j)+"])= " + \
+			#	str(math.sin(hsphere_coords[j]))
 			product *= math.sin(hsphere_coords[j])
-		print "product of sines from 0 to " + str(i) + "= " + str(product)
-		print "cartesian_coord["+str(i-1)+"]= " + str(cartesian_coords[i-1])
-		print "ratio= " + str(cartesian_coords[i-1] / product)
+		#print "product of sines from 0 to " + str(i) + "= " + str(product)
+		#print "cartesian_coord["+str(i-1)+"]= " + str(cartesian_coords[i-1])
+		#print "ratio= " + str(cartesian_coords[i-1] / product)
 		angle_i = math.acos(cartesian_coords[i-1] / product)
-		print "hsphere_coord[" + str(i) + "]= " + str(angle_i)
+		#print "hsphere_coord[" + str(i) + "]= " + str(angle_i)
 		hsphere_coords.append(angle_i)
 		
-		# If this is the next to last hsphere_coord, take the last arcsine
-		# and verify it against the last hspherical coord
+		# If this is the next to last hsphere_coord, fix it up taking into
+		# account signs of the various sine products
 		if (i == (d21-1)):
-			angle_i = math.asin(cartesian_coords[d21-1] / product)
-			print "cartesian_coord["+str(d21-1)+"]= " + str(cartesian_coords[d21-1])
-			#print "hsphere_coord[" + str(d21-1) + "]= " + str(angle_i)
-			# The last two coords must give same angle from acos and asin
-			# or be off by pi, since acos is restricted to [0,2pi] and
-			# asin is restricted to [-pi/2,pi/2]
-			angle_diff = abs(hsphere_coords[d21-1]- angle_i)
-			angles_equal = approx_equals_tolerance(angle_diff, 0, TOLERANCE3)
-			angles_off_by_pi = approx_equals_tolerance(angle_diff, PI, TOLERANCE3)
-			if (not angles_equal and not angles_off_by_pi):
-				print "angle_diff= " + str(angle_diff)
-			assert(angles_equal or angles_off_by_pi)
+			hsphere_coords[d21-1] = \
+				fix_last_hsphere_coord(product=product, \
+									c_n = cartesian_coords[d21-1], \
+									c_n1 = cartesian_coords[d21-2])
 	return hsphere_coords

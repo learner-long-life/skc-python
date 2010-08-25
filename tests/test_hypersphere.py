@@ -6,68 +6,96 @@ import math
 import unittest
 
 ##############################################################################
-def test_hsphere_coords_roundtrip(basis):
-
-	(matrix_U, components, angle) = get_random_unitary(basis)
-	
-	axis = basis.sort_canonical_order(components)
-	print "axis= " + str(axis)
-	theta = math.pi / 12
-	print "U=" + str(matrix_U)
-	hsphere_coords = unitary_to_hspherical(matrix_U, basis)
-	
-	print str(hsphere_coords)
-	
-	matrix_U2 = hspherical_to_unitary(hsphere_coords, basis)
-	print "U2=" + str(matrix_U2)
-	
-	assert_matrices_approx_equal(matrix_U, matrix_U2, trace_distance)
-
-##############################################################################
-def test_hsphere_coords_random(basis):
-
-	(matrix_U, components, angle) = get_random_unitary(basis)
-	theta = math.pi / 12
-	print "U=" + str(matrix_U)
-	hsphere_coords = unitary_to_hspherical(matrix_U, basis)
-	
-	print str(hsphere_coords)
-
-##############################################################################
-# Force negative angle to test that edge case
-def test_hsphere_coords_random_negative(basis):
-
-	(matrix_U, components, angle) = \
-		get_random_unitary(basis, angle_lower = -PI_HALF, angle_upper = 0)
-	theta = math.pi / 12
-	print "U=" + str(matrix_U)
-	hsphere_coords = unitary_to_hspherical(matrix_U, basis)
-	
-	print str(hsphere_coords)
-
-##############################################################################
-def test_hsphere_coords_random_axis(basis):
-	theta = math.pi / 12
-
-	axis = pick_random_axis(basis)
-	test_hsphere_coords_axis(theta, axis, basis)
-	
-##############################################################################
+# Tests 1.5xround-tripping, axis_to_unitary to unitary_to_hspherical to
+# hspherical_to_unitary
 def test_hsphere_coords_axis(angle, axis, basis):
 	matrix_U = axis_to_unitary(axis, angle/2.0, basis)
-	print "U=" + str(matrix_U)
+	#print "U=" + str(matrix_U)
 	hsphere_coords = unitary_to_hspherical(matrix_U, basis)
 	
-	print str(hsphere_coords)
+	#print str(hsphere_coords)
 	
 	matrix_U2 = hspherical_to_unitary(hsphere_coords, basis)
-	print "U2=" + str(matrix_U2)
+	#print "U2=" + str(matrix_U2)
 	
 	assert_matrices_approx_equal(matrix_U, matrix_U2, trace_distance)
 
-axis2 = cart3d_to_h2(x=1, y=1, z=1)
+def create_hsphere_test_case(basis, axis, angle):
+	##############################################################################
+	# Class for testing matrix logarithms for various SU(d)
+	class TestHSphereCoords(unittest.TestCase):
+		
+		def setUp(self):
+			self.basis = basis
+			self.axis = axis
+			self.angle = angle
+	
+		#---------------------------------------------------------------------
+		def test_hsphere_coords_roundtrip(self):
+		
+			(matrix_U, components, angle) = get_random_unitary(self.basis)
+			
+			axis = self.basis.sort_canonical_order(components)
+			#print "axis= " + str(axis)
+			#print "U=" + str(matrix_U)
+			hsphere_coords = unitary_to_hspherical(matrix_U, self.basis)
+			
+			#print str(hsphere_coords)
+			
+			matrix_U2 = hspherical_to_unitary(hsphere_coords, self.basis)
+			#print "U2=" + str(matrix_U2)
+			
+			assert_matrices_approx_equal(matrix_U, matrix_U2, trace_distance)
+		
+		#---------------------------------------------------------------------
+		# Force negative angle to test that edge case
+		def test_hsphere_coords_random_negative(self):
+		
+			(matrix_U, components, angle) = \
+				get_random_unitary(self.basis, angle_lower = -PI_HALF, angle_upper = 0)
+			axis = self.basis.sort_canonical_order(components)
+			#print "axis= " + str(axis)
+			#print "U=" + str(matrix_U)
+			hsphere_coords = unitary_to_hspherical(matrix_U, self.basis)
+			
+			#print str(hsphere_coords)
+			
+			matrix_U2 = hspherical_to_unitary(hsphere_coords, self.basis)
+			#print "U2=" + str(matrix_U2)
+			
+			assert_matrices_approx_equal(matrix_U, matrix_U2, trace_distance)
+		
+		#---------------------------------------------------------------------
+		# Test round-tripping of cartesian to hspherical coords and back
+		# about a random axis and fixed angle
+		def test_hsphere_coords_random_axis(self):
+			theta = math.pi / 12
+		
+			axis = pick_random_axis(self.basis)
+			test_hsphere_coords_axis(theta, axis, self.basis)
+			
+		#---------------------------------------------------------------------
+		# Test round-tripping of cartesian to hspherical coords and back
+		# about both a fixed axis and fixed angle
+		def test_hsphere_coords_axis(self):
+			test_hsphere_coords_axis(self.angle, self.axis, self.basis)
+			
+	TestHSphereCoords.__name__ += "SU" + str(basis.d) 
+	
+	return TestHSphereCoords
+
 H2 = get_hermitian_basis(d=2)
+axis2 = cart3d_to_h2(x=1, y=1, z=1)
+angle = math.pi/12
+su2_tests = create_hsphere_test_case(H2, axis2, angle)
+
 H4 = get_hermitian_basis(d=4)
+axis4 = pick_random_axis(H4)
+su4_tests = create_hsphere_test_case(H4, axis4, angle)
+
+H8 = get_hermitian_basis(d=8)
+axis8 = pick_random_axis(H8)
+su8_tests = create_hsphere_test_case(H8, axis8, angle)
 
 #test_hsphere_coords_axis(angle=math.pi/12, axis=axis2, basis=H2)
 #test_hsphere_coords_random_axis(basis=H2)
@@ -153,6 +181,13 @@ def get_suite():
 	loader = unittest.TestLoader()
 	suite1 = loader.loadTestsFromTestCase(TestHSphereLastCoord)
 	suite.addTest(suite1)
+
+	suite2 = loader.loadTestsFromTestCase(su2_tests)
+	suite.addTest(suite2)
+	suite3 = loader.loadTestsFromTestCase(su4_tests)
+	suite.addTest(suite3)
+	suite4 = loader.loadTestsFromTestCase(su8_tests)
+	suite.addTest(suite4)
 	return suite
 
 if (__name__ == '__main__'):

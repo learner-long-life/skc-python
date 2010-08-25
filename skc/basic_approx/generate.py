@@ -6,6 +6,7 @@ import types
 from skc.basic_approx.file import *
 from skc.utils import *
 from skc.decompose import *
+from skc.hypersphere import *
 
 ##############################################################################
 # GLOBAL VARIABLES
@@ -46,20 +47,7 @@ def gen_basic_approx_generation(prefixes):
 		new_op.ancestors = simplified_sequence
 		new_op.matrix_from_ancestors(settings.iset_dict, settings.identity)
 		
-		# Decompose into R^{d^2} for later processing into search trees
-		(components, K, matrix_H) = unitary_to_axis(new_op.matrix, settings.basis)
-		dimensions = settings.basis.sort_canonical_order(components)
-		# If all dimensions are zero, then flip them to have positive components
-		# and shift the negative angle by 2pi to make angle positive
-		sign = -1
-		for dimension in dimensions:
-			if (numpy.sign(dimension) > 0):
-				sign = +1
-		if (sign < 0):
-			for i in range(len(dimensions)):
-				dimensions[i] *= -1
-			K = -K + TWO_PI
-		dimensions.append(K) # add the angle as the last component
+		dimensions = su2_to_hspherical(new_op.matrix)
 		new_op.dimensions = dimensions
 
 		# Add this to our list so we don't add it again this generation

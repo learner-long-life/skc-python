@@ -1,41 +1,35 @@
-from skc.basic_approx.file import *
+# Functions for searching basic approximations
 from skc.decompose import *
-from skc.kdtree import *
+from skc.basic_approx.file import *
+from skc.basic_approx.process import *
+from skc.operator import *
 
-def components_to_kdpoint(components, basis, angle):
-	point = basis.sort_canonical_order(components)
-	point.append(angle) # add the angle as the last component
-	return point
+import time
 
-def unitary_to_kdpoint(matrix_U):
-	(components, K, matrix_H) = unitary_to_axis(matrix_U, basis)
-	return components_to_kdpoint(components, basis, K)
-	
-def build_kdtree(filename_prefix, filename_upper, filename_suffix, basis):
-	filenames = []
-	for i in range(1,filename_upper):
-		filenames.append(filename_prefix+str(i)+filename_suffix)
-	
-	# This is the data that we load from a file
-	sequences = []
-	for filename in filenames:
-		new_sequences = read_from_file(filename)
-		sequences.extend(new_sequences)
-	
-	data = []
-	# Process this to produce the format the kdtree expects, namely a list of components in each dimension
-	for operator in sequences:
-		#print "op= " + str(operator)
-		#print "matrix= " + str(operator.matrix)
-		#operator.dimensions = unitary_to_kdpoint(operator.matrix)
-		#print "dimensions= " + str(operator.dimensions)
-		# Now dimensions is in R^{d^2}
-		data.append(operator)
-		
-	
-	# Build it! Kablooey
-	tree = KDTree.construct_from_data(data)
+def load_kdtree(base_dir, filename_suffix):
+	filename = base_dir+"/kdt-"+filename_suffix+".pickle"
+	tree = read_from_file(filename)
 	return tree
+
+def search_kdtree(tree, search_U, basis):
+	
+	begin_time = time.time()
+	
+	(components, K, matrix_H) = unitary_to_axis(search_U, basis)
+	# Re-center angles from 0 to 2pi, instead of -pi to pi
+	if (K < 0):
+		for (k,v) in components.items():
+			components[k] = v * -1
+		K *= -1
+	search_op = Operator(name="Search", matrix=search_U)
+	search_op.dimensions = components_to_kdpoint(components, basis, K)
+	print "search.dimensions= " + str(search_op.dimensions)
+	
+	nearest = tree.query(search_op, t=1) # find nearest 4 points
+	
+	end_time = time.time()
+	print "Search time: " + str(end_time - begin_time)
+	return nearest[0]
 
 ##############################################################################
 # Find the closest basic approximation in approxes to arbitrary unitary u

@@ -47,7 +47,7 @@ def gen_basic_approx_generation(prefixes):
 		new_op.ancestors = simplified_sequence
 		new_op.matrix_from_ancestors(settings.iset_dict, settings.identity)
 		
-		dimensions = su2_to_hspherical(new_op.matrix)
+		dimensions = unitary_to_hspherical(new_op.matrix, settings.basis)
 		new_op.dimensions = dimensions
 
 		# Add this to our list so we don't add it again this generation

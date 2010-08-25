@@ -5,6 +5,7 @@ import types
 
 from skc.basic_approx.file import *
 from skc.utils import *
+from skc.decompose import *
 
 ##############################################################################
 # GLOBAL VARIABLES
@@ -36,12 +37,31 @@ def gen_basic_approx_generation(prefixes):
 		#			" to " + str(simplified_sequence)
 		ancestor_string = list_as_string(simplified_sequence)
 		already_done = (ancestor_string in simplified_ancestors)
-		new_op.ancestors = simplified_sequence
-		new_op.matrix_from_ancestors(settings.iset_dict, settings.identity)
 		#if (already_done):
 		#	print "Already did " + str(ancestor_string)
 		if (simplified_sequence == [settings.identity.name] or already_done):
 			return True
+		
+		# Only assign to operator if we have a valid, new, simplified sequence
+		new_op.ancestors = simplified_sequence
+		new_op.matrix_from_ancestors(settings.iset_dict, settings.identity)
+		
+		# Decompose into R^{d^2} for later processing into search trees
+		(components, K, matrix_H) = unitary_to_axis(new_op.matrix, settings.basis)
+		dimensions = settings.basis.sort_canonical_order(components)
+		# If all dimensions are zero, then flip them to have positive components
+		# and shift the negative angle by 2pi to make angle positive
+		sign = -1
+		for dimension in dimensions:
+			if (numpy.sign(dimension) > 0):
+				sign = +1
+		if (sign < 0):
+			for i in range(len(dimensions)):
+				dimensions[i] *= -1
+			K = -K + TWO_PI
+		dimensions.append(K) # add the angle as the last component
+		new_op.dimensions = dimensions
+
 		# Add this to our list so we don't add it again this generation
 		simplified_ancestors.append(ancestor_string)
 		return False
@@ -60,6 +80,7 @@ def gen_basic_approx_generation(prefixes):
 			#if (simplify_length > 0):
 			#	print str(simplify_length) + " simplified"
 			append_sequence(new_op)
+			#print "matrix= " + str(new_op.matrix)
 			
 	# Dump whatever's left this generation into one last file
 	save_chunk_to_file()

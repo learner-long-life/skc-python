@@ -30,6 +30,7 @@ def set_filename_suffix(new_filename_suffix):
 ##############################################################################
 def read_from_file(filename):
 	#filename = filename_prefix + "-" + filename_suffix +".pickle"
+	print "Begin reading file: " + filename
 	f = open(filename, 'rb')
 	
 	begin_time = time.time()
@@ -47,6 +48,8 @@ def dump_to_file(object, custom_filename=""):
 	if (len(custom_filename) > 0):
 		custom_filename = "-" + custom_filename
 	filename = filename_prefix + "-" + filename_suffix + custom_filename + ".pickle"
+	
+	print "Begin writing file: " + filename
 	f = open(filename, 'wb')
 	
 	begin_time = time.time()

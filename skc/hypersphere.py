@@ -17,12 +17,12 @@ def fix_last_hsphere_coord(product, c_n, c_n1):
 	if (approx_equals(c_n1, 0)):
 		# If c_n1 close to 0, cos(phi_n1) close to 0, sin(phi_n1) close to 1 
 		assert_approx_equals(c_n, product)
-		assert_approx_equals(c_n1, 0)
+		#assert_approx_equals(c_n1, 0)
 		return PI_HALF
 	if (approx_equals(c_n, 0)):
 		# If c_n close to 0, cos(phi_n1) close to 1, sin(phi_n1) close to 0
 		assert_approx_equals(c_n1, product)
-		assert_approx_equals(c_n, 0)
+		#assert_approx_equals(c_n, 0)
 		return 0
 	
 	# Now it's time to get the raw angles, restricted by acos and asin

@@ -1,0 +1,98 @@
+Quantum Compiler
+https://sourceforge.net/p/quantumcompiler/home/
+
+This is a research implementation of a quantum compiler,
+initially using the Solovay-Kitaev algorithm
+of successive approximation.
+It is based on similar compilers by Chris Dawson and Aram Harrow.
+Links can be found at the project homepage above.
+I will think of a snazzier URL later.
+
+-----------------------------------------------------------------
+REQUIREMENTS:
+
+I've tested this on
+	Mac OS X 10.5, python-2.5.4, numpy-1.4.1 from fink
+	Linux (Fedora Core 13), python-2.6.4, numpy-1.3.0.
+
+-----------------------------------------------------------------
+FILES:
+
+This distribution contains the following top-level directories:
+/skc/		The main Solovay-Kitaev Python top-level module
+/manage/	Scripts for running maintenance tasks
+/pickles/	Generated files (described below)
+/scratch/	Sandbox for experimenting with functionality
+/tests/		Unit tests
+
+-----------------------------------------------------------------
+SETUP:
+
+You will probably need to set your PYTHONPATH to the local directory,
+like this bash example:
+
+	export PYTHONPATH=.
+
+-----------------------------------------------------------------
+OPERATION:
+
+The compiler operates in the following stages.
+
+1. Generating basic approximations.
+2. Building a search tree out of basic approximations.
+3. Running the Solovay-Kitaev algorithm for a desired gate
+   using the tree of basic approximations as a base case.
+
+How to perform each of these steps is given in more detail below.
+with example commands given below for SU(2), that is, for single-qubit gates.
+
+You can perform analogous commands for SU(4), they will just take longer
+and you are more likely to run out of memory.
+
+1. GENERATION
+
+Generate the basic approximations (epsilon-0 net) as files on disk to
+be read / processed later. This depends on a given instruction set. 
+You can view the SU(2) settings used in the pre-packaged example
+by viewing the file:
+
+	manage/generate_su2.py
+
+This distribution should already come with generated files for your
+convenience, which you can list like this:
+
+anti-hero-1:skc-python buy-ppham$ ls -lh pickles/su2/
+total 33520
+-rw-r--r--  1 buy-ppham  staff   852B Aug 26 00:37 gen-g1-1.pickle
+-rw-r--r--  1 buy-ppham  staff   505K Aug 26 00:27 gen-g10-1.pickle
+-rw-r--r--  1 buy-ppham  staff   1.0M Aug 26 00:28 gen-g11-1.pickle
+-rw-r--r--  1 buy-ppham  staff   2.0M Aug 26 00:28 gen-g12-1.pickle
+-rw-r--r--  1 buy-ppham  staff   4.1M Aug 26 00:29 gen-g13-1.pickle
+-rw-r--r--  1 buy-ppham  staff   8.3M Aug 26 00:31 gen-g14-1.pickle
+-rw-r--r--  1 buy-ppham  staff   1.4K Aug 26 00:25 gen-g2-1.pickle
+-rw-r--r--  1 buy-ppham  staff   3.2K Aug 26 00:25 gen-g3-1.pickle
+-rw-r--r--  1 buy-ppham  staff   6.4K Aug 26 00:25 gen-g4-1.pickle
+-rw-r--r--  1 buy-ppham  staff    14K Aug 26 00:25 gen-g5-1.pickle
+-rw-r--r--  1 buy-ppham  staff    29K Aug 26 00:25 gen-g6-1.pickle
+-rw-r--r--  1 buy-ppham  staff    60K Aug 26 00:25 gen-g7-1.pickle
+-rw-r--r--  1 buy-ppham  staff   123K Aug 26 00:27 gen-g8-1.pickle
+-rw-r--r--  1 buy-ppham  staff   248K Aug 26 00:27 gen-g9-1.pickle
+-rw-r--r--  1 buy-ppham  staff   540B Aug 26 00:37 gen-iset.pickle
+
+Sequences are enumerated in "generations", one generation per file,
+where generation x contains all sequences up to x instructions in length
+(before simplifying). Naturally, generation 16 is larger than generation
+1 because there are many more sequences of length 16 than of length 1.
+
+If you want to regenerate these files from scratch, just wipe out
+the old ones and run the generate script again:
+
+	rm pickles/su2/*
+	python manage/generate_su2.py
+
+This takes a few minutes, so go read e-mail
+or get coffee. Some helpful stats are printed to amuse you if you really
+want to watch.
+
+Okay, so now we have generated sequences on disk, ready to be processed
+into a tree for efficient nearest-neighbor searching.

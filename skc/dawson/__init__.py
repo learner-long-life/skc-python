@@ -1,12 +1,8 @@
 # Solovay-Kitaev compiler using Dawson's group factor
 
-from skc_dawson_factor import *
-from skc_basic_approx import *
-from skc_operator import *
-from skc_utils import *
-
-import cPickle
-import time
+from skc.operator import *
+from skc.utils import *
+from skc.basic_approx.search import *
 
 ##############################################################################
 # Global variables
@@ -14,64 +10,45 @@ the_basis = None
 # Not currently used with aram_diagonal_factor method
 the_axis = None
 the_factor_method = None
-basic_approxes = None
+the_tree = None
+
+# Build the search tree. Kablooey!
+def sk_build_tree(subdir, filecount_upper):
+	global the_tree
+	the_tree = build_kdtree("pickles/"+subdir+"/gen-g", filecount_upper, "-1.pickle")
+
+def sk_search_tree(op_U):
+	op = search_kdtree(the_tree, op_U.matrix, the_basis)
+	return op
 
 ##############################################################################
-def load_basic_approxes(filename):
-	global basic_approxes
-	f = open(filename, 'rb')
-	
-	begin_time = time.time()
-	
-	iset = cPickle.load(f)
-	
-	iset_time = time.time() - begin_time
-	print "Loaded instruction set in: " + str(iset_time)
-	print "Iset = " + str(iset)
-	
-	begin_time = time.time()
-	
-	basic_approxes = cPickle.load(f)
-	#basic_approxes = [I2]
-	
-	approx_time = time.time() - begin_time
-	
-	print "Loaded basic approximations in: " + str(approx_time)
-	print "Number of BA: " + str(len(basic_approxes))
-
-##############################################################################
-# Dawson's code uses trace distance (although the paper uses operator norm)
-def distance(matrix_U1,matrix_U2):
-	return trace_distance(matrix_U1, matrix_U2)
-
-##############################################################################
-def set_axis(axis):
+def sk_set_axis(axis):
 	global the_axis
 	the_axis = axis
 	print "the_axis= " + str(the_axis)
 
 ##############################################################################
 # Not currently used with aram_diagonal_factor method
-def set_basis(basis):
+def sk_set_basis(basis):
 	global the_basis
 	the_basis = basis
 	print "the_basis= " + str(the_basis)
 
 ##############################################################################
-def set_factor_method(factor_method):
+def sk_set_factor_method(factor_method):
 	global the_factor_method
 	the_factor_method = factor_method
 	print "the_factor_method= " + str(the_factor_method.__name__)
 
 ##############################################################################
-def solovay_kitaev(U, n, id, ancestry):
+def solovay_kitaev(U, n, id="U", ancestry=""):
 	print "*******************************************************************"
 	print str(id)+"_"+str(n)
 	print ancestry
 	print "-------------------------------------------------------------------"
 	
 	if (n == 0):
-		basic_approx, min_dist = find_basic_approx(basic_approxes, U, distance)
+		basic_approx = sk_search_tree(U)
 		# discard min_dist for now. but just you wait...
 		print "Returning basic approx: " + str(basic_approx)
 		return basic_approx
@@ -81,7 +58,7 @@ def solovay_kitaev(U, n, id, ancestry):
 		print "U_"+str(n-1)+": " + str(U_n1)
 		U_n1_dagger = U_n1.dagger()
 		U_U_n1_dagger = U.multiply(U_n1_dagger).matrix
-		V_matrix,W_matrix = the_factor_method(U_U_n1_dagger, the_basis)
+		V_matrix,W_matrix = the_factor_method(U_U_n1_dagger, the_basis, the_axis)
 		print "V: " + str(V_matrix)
 		print "W: " + str(W_matrix)
 		V = Operator(name="V", matrix=V_matrix)

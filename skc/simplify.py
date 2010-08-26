@@ -1,34 +1,38 @@
+from skc.utils import *
+
 class SimplifyEngine:
 
 	#-------------------------------------------------------------------------
 	def __init__(self, rules):
 		self.rules = rules
-		self.min_arg_count = 255 # This is a pretty safe heuristic
+		self.max_arg_count = 0 # This is a pretty safe heuristic
 		for rule in self.rules:
-			if (rule.arg_count < self.min_arg_count):
-				self.min_arg_count = rule.arg_count
+			if (rule.arg_count > self.max_arg_count):
+				self.max_arg_count = rule.arg_count
 	
 	#-------------------------------------------------------------------------
 	# If sequence is non-empty at beginning of method,
 	# transfer one element from sequence to scratch and returns True
 	# otherwise returns False
 	def transfer_to_scratch(self, sequence, scratch):
-		if (len(sequence) > 0):
-			new_op = sequence.pop(len(sequence)-1)
+		sequence_len = len(sequence)
+		if (sequence_len > 0):
+			new_op = sequence.pop(sequence_len-1)
 			scratch.insert(0, new_op)
-			return True
+			return (True, sequence)
 		else:
-			return False
+			return (False, sequence)
 		#print "transfer_to_scratch= " + str(scratch)
 				
 	#-------------------------------------------------------------------------
 	# Fill the scratch sequence up to the arg_count of any rule
 	def fill_scratch_sequence(self, sequence, scratch):
 		long_enough = True
-		while (long_enough and (len(scratch) < self.min_arg_count)):
-			long_enough = self.transfer_to_scratch(sequence, scratch)
+		while (long_enough and (len(scratch) < self.max_arg_count)):
+			(long_enough, sequence) = self.transfer_to_scratch(sequence, scratch)
 		if (long_enough):
-			assert(len(scratch) >= self.min_arg_count)
+			assert(len(scratch) >= self.max_arg_count)
+		return sequence
 
 	#-------------------------------------------------------------------------
 	# The main simplify method called from outside				
@@ -41,50 +45,59 @@ class SimplifyEngine:
 		scratch_sequence = []
 		 # This is reset in every iteration below, just declare it here so
 		 # we have access to it in the first While test (kludge!)
-		global_obtains = False
-		global_any_obtains = False
+		global_obtains = True
+		#global_any_obtains = False
 		
-		while ((len(sequence) > 0) or global_obtains):
+		while (global_obtains):
 			global_obtains = False
 			#print "Entering while loop!"
 		
 			# Prefill the scratch space to min_arg_count
-			self.fill_scratch_sequence(sequence, scratch_sequence)
+			sequence = self.fill_scratch_sequence(sequence, scratch_sequence)
+			#print "sequence= " + str(sequence)
+			#print "fill_scratch= " + str(scratch_sequence)
 		
 			# Apply the rules repeatedly in scratch_space until none of them
 			# obtain
-			first = True
-			any_obtains = False
-			while (first or any_obtains):
-				any_obtains = False
-				first = False
-				for rule in (self.rules):
-					obtains = False
-					first_time = True
-					# If we don't obtain or have enough arguments for this
-					# rule, skip it
-					while ((first_time or obtains) and
-					       (len(scratch_sequence) >= rule.arg_count)):
-						first_time = False
-						# Set the outer condition to repeat all rules later
-						# Repeat this rule now, in case it obtains again
-						obtains = rule.simplify(scratch_sequence)
-						if (obtains):
-							any_obtains = True
-							global_obtains = True
-							global_any_obtains = True
+			#first = True
+			#any_obtains = False
+			#any_obtains = False
+			#first = False
+			for rule in (self.rules):
+				#obtains = False
+				#first_time = True
+				# If we don't obtain or have enough arguments for this
+				# rule, skip it
+				if (len(scratch_sequence) >= rule.arg_count):
+					#first_time = False
+					# Set the outer condition to repeat all rules later
+					# Repeat this rule now, in case it obtains again
+					split = len(scratch_sequence) - rule.arg_count
+					scratch_excess = scratch_sequence[:split]
+					scratch_subset = scratch_sequence[split:]
+					(obtains, scratch_subset) = rule.simplify(scratch_subset)
+					scratch_sequence = scratch_excess + scratch_subset
+					if (obtains):
+						#print "***" + str(scratch_sequence)
+						#any_obtains = True
+						global_obtains = True
+						#global_any_obtains = True
 			#print "global_obtains= " + str(global_obtains)
+			
+			#if (len(sequence) <= 0):
+			#	break
 						
 			# Now the scratch sequence is stale, so let's get a fresh op
-			self.transfer_to_scratch(sequence, scratch_sequence)
+			#self.transfer_to_scratch(sequence, scratch_sequence)
 			#print str(global_obtains)
 			#print str(scratch_sequence)
 			#print str(sequence)
-			
-		simplify_length -= len(scratch_sequence)
-			
-		# The old sequence should be empty, return the scratch
-		return (simplify_length, scratch_sequence)
+		
+		# Old sequence could be non-empty, return everything
+		sequence = sequence+scratch_sequence
+		simplify_length -= len(sequence)
+		
+		return (simplify_length, sequence)
 					
 ##############################################################################
 class SimplifyRule:
@@ -107,7 +120,7 @@ class SimplifyRule:
 				arg_list.pop(0)
 			arg_list.insert(0, C)
 			#print str(arg_list)
-		return obtains
+		return (obtains, arg_list)
 		
 ##############################################################################
 class AdjointRule(SimplifyRule):
@@ -183,3 +196,25 @@ class IdentityRule(SimplifyRule):
 			C = A
 
 		return (activated, C)
+
+##############################################################################
+class GeneralRule(SimplifyRule):
+	def __init__(self, sequence, new_sym = 'I'):
+		self.sequence = sequence
+		self.new_sym = new_sym
+		slogan = ''
+		for arg in sequence:
+			slogan += arg
+		slogan += " = " + new_sym
+		SimplifyRule.__init__(self, slogan, len(sequence))
+		
+	def __simplify__(self, arg_list):
+		
+		for i in range(self.arg_count):
+			if (self.sequence[i] != arg_list[i]):
+				# If at any point we have a mismatch, return right away
+				return (False, '')
+		
+		#print "GeneralRule.__simplify__: " + str(arg_list) + " -> " + self.new_sym
+		# If we made it all the way through, congrats! We have an identity
+		return (True, self.new_sym)

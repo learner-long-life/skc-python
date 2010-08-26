@@ -148,6 +148,33 @@ of 0.00498 in Fowler distance, which again, is nothing to sneeze at for
 two levels of recursion.
 
 -----------------------------------------------------------------
+SU(4)
+
+So far, we have only done what Chris and Aram have done in their code,
+just much slower and several years later. But wait! Now we will, for
+the first time ever, compile an SU(4) unitary using Solovay-Kitaev.
+
+1. Generate: we've already generated SU(4) basic approximations up to
+   sequence length = 6, which is good enough for testing purposes.
+   If you want to generate them again (this takes a looong time):
+
+	rm -f pickles/su4/*
+	python manage/generate_su4.py
+
+2. Build a search tree: again, this is really part of the next step.
+   But you can test the basic lookup feature of the kdtree.
+
+	python scratch/scratch_kdtree_su4.py
+
+   This will give you fowler distance errors of about 0.2 - 0.4,
+   which isn't great, but we only went to sequence length = 6 after all.
+
+3. Compile: here we do n=4 recursion levels to get fowler distance errors
+   of about 3e-7. Pretty good!
+
+	python scratch/sk_dawson_su4.py
+
+-----------------------------------------------------------------
 FUTURE IMPROVEMENTS
 
 So there is a lot of work to be done to improve the performance of this

@@ -33,10 +33,15 @@ def diagonalize(matrix_U, basis):
 	
 	# Eigenvector matrix should be unitary if we are to have
 	# V dagger be the same as V inverse
-	assert_matrix_unitary(matrix_V, TOLERANCE6)
+	#assert_matrix_unitary(matrix_V, TOLERANCE6, message=str())
+	
 	
 	# Multiply V^{-1} * U * V to diagonalize
 	matrix_W = matrix_V.I * matrix_U * matrix_V
+
+	# Assert that we can recover matrix U
+	#matrix_U2 = matrix_V * matrix_W * matrix_V.I
+	#assert_matrices_approx_equal(matrix_U, matrix_U2, trace_distance)
 	
 	#print "W= " + str(matrix_W)
 	

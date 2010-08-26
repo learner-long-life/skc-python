@@ -75,9 +75,9 @@ def assert_and_print(bool_condition, arg_to_stringify, msg_prefix=""):
 	assert(bool_condition)
 
 ##############################################################################
-def assert_approx_not_equals_tolerance(value1, value2, tolerance):
+def assert_approx_not_equals_tolerance(value1, value2, tolerance, message=""):
 	diff = abs(value1 - value2)
-	assert_and_print(diff >= tolerance, diff)
+	assert_and_print(diff >= tolerance, diff, message)
 	
 ##############################################################################
 def assert_in_range(value, lower, upper, message=""):
@@ -94,8 +94,8 @@ def assert_approx_equals(value1, value2, message=""):
 	assert_approx_equals_tolerance(value1, value2, TOLERANCE2, message)
 
 ##############################################################################
-def assert_approx_not_equals(value1, value2):
-	assert_approx_not_equals_tolerance(value1, value2, TOLERANCE2)
+def assert_approx_not_equals(value1, value2, message=""):
+	assert_approx_not_equals_tolerance(value1, value2, TOLERANCE2, message=message)
 
 ##############################################################################
 def approx_equals_tolerance(value1, value2, tolerance):
@@ -104,38 +104,6 @@ def approx_equals_tolerance(value1, value2, tolerance):
 ##############################################################################
 def approx_equals(value1, value2):
 	return (abs(value1 - value2) < TOLERANCE)
-
-##############################################################################
-# This is plagiarized from Chris Dawson's su2.cpp: su2::mat_to_cart3
-def matrix_to_unitary4d(matrix_U):
-
-	#print "matrix_to_unitary4d of " + str(matrix_U)
-	# The below are negative, and contain an extra factor of i, b/c of the
-	# term -i sin(theta/2) (sx*X + sy*Y + sz*Z)
-	sx = -1 * matrix_U[(0,1)].imag;
-	# x component, imag(U(1,0)) should be identical
-	assert_approx_equals(matrix_U[(0,1)].imag, matrix_U[(1,0)].imag)
-	sy = matrix_U[(1,0)].real;
-	# y component, real(U(0,1)) should be identical
-	assert_approx_equals(matrix_U[(1,0)].real, -matrix_U[(0,1)].real)
-	sz = (matrix_U[(1,1)].imag - matrix_U[(0,0)].imag)/2.0;
-	# z component
-	assert_approx_equals(matrix_U[(1,1)].imag, -matrix_U[(0,0)].imag)
-	# identity component
-	si = (matrix_U[(0,0)].real + matrix_U[(1,1)].real)/2.0;
-	assert_approx_equals(matrix_U[(0,0)].real, matrix_U[(1,1)].real)
-	theta = 2 * math.acos(si)
-	sin_theta_half = math.sin(theta / 2)
-	# I think the components into Unitary are supposed to still contain
-	# sin(theta/2) factor, after all si does above
-	#sx /= sin_theta_half
-	#sy /= sin_theta_half
-	#sz /= sin_theta_half
-	#print "ni=" + str(si)
-	#print "nx=" + str(sx)
-	#print "ny=" + str(sy)
-	#print "nz=" + str(sz)
-	return Unitary4D(ni=si, nx=sx, ny=sy, nz=sz)
 
 ##############################################################################
 # Indented printing based on depth
@@ -171,11 +139,19 @@ def matrix_direct_sum(matrix_A, matrix_B):
   return direct_sum
   
 ##############################################################################
-def assert_matrices_approx_equal(matrix1, matrix2, distance,
+def assert_matrices_approx_equal(matrix1, matrix2, distance=trace_distance,
 		tolerance=TOLERANCE3):
 	dist = distance(matrix1, matrix2)
 	msg = "Matrices not-equal:\n" + str(matrix1) + "\n" +  str(matrix2)
 	assert_approx_equals_tolerance(dist, 0, tolerance=tolerance, message=msg)
+
+##############################################################################
+def assert_matrices_approx_not_equal(matrix1, matrix2, distance=trace_distance,
+		tolerance=TOLERANCE3, message=""):
+	dist = distance(matrix1, matrix2)
+	msg = "Matrices equal:\n" + str(matrix1) + "\n" +  str(matrix2)
+	assert_approx_not_equals_tolerance(dist, 0, tolerance=tolerance, \
+		message=message)
 	
 ##############################################################################
 def assert_matrix_hermitian(matrix):

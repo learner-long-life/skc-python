@@ -1,11 +1,13 @@
 # Top level module for generating basic approximations
-import time
-import cPickle
-import types
+#import time
+#import cPickle
+#import types
+import numpy
 
 from skc.basic_approx.file import *
 from skc.utils import *
 from skc.decompose import *
+from skc.utils import *
 
 ##############################################################################
 # GLOBAL VARIABLES
@@ -44,12 +46,20 @@ def gen_basic_approx_generation(prefixes):
 		
 		# Only assign to operator if we have a valid, new, simplified sequence
 		new_op.ancestors = simplified_sequence
-		new_op.matrix_from_ancestors(settings.iset_dict, settings.identity)
+		close_to_identity = new_op.matrix_from_ancestors(settings.iset_dict, settings.identity)
+		# If this matrix is close to identity, return True to skip it
+		if (close_to_identity):
+			return True
 		
 		# Decompose into R^{d^2} for later processing into search trees
 		(components, K, matrix_H) = unitary_to_axis(new_op.matrix, settings.basis)
 		dimensions = settings.basis.sort_canonical_order(components)
-		# If all dimensions are zero, then flip them to have positive components
+		
+		# Take absolute value of components
+		for i in range(len(dimensions)):
+			dimensions[i] = numpy.abs(dimensions[i])
+
+		# If all dimensions are negative, then flip them to have positive components
 		# and shift the negative angle by 2pi to make angle positive
 		sign = -1
 		for dimension in dimensions:
@@ -64,23 +74,24 @@ def gen_basic_approx_generation(prefixes):
 
 		# Add this to our list so we don't add it again this generation
 		simplified_ancestors.append(ancestor_string)
+		#print "ancestor_string= " + ancestor_string
 		return False
 	#------------------------------------------------------------------------
 	for prefix in prefixes:
 		# Enumerate over iset, appending one op to end of prefix each
 		for insn in settings.iset:
 			new_op = prefix.add_ancestors(insn)
-			(simplify_length, new_sequence) = \
-				settings.simplify(new_op.ancestors)
+			#(simplify_length, new_sequence) = \
+			#	settings.simplify(new_op.ancestors)
 			
 			already_done = simplify_new(new_op)
 			if (already_done):
 				continue
-			#print str(new_sequence)
 			#if (simplify_length > 0):
 			#	print str(simplify_length) + " simplified"
 			append_sequence(new_op)
 			#print "matrix= " + str(new_op.matrix)
+			#print str(new_op.ancestors)
 			
 	# Dump whatever's left this generation into one last file
 	save_chunk_to_file()

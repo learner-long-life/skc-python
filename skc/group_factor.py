@@ -1,6 +1,6 @@
-from skc_utils import *
-from skc_dawson_factor import *
-from skc_basis import *
+from skc.utils import *
+from skc.dawson.factor import *
+from skc.basis import *
 
 ##############################################################################
 def get_group_commutator(matrix_V, matrix_W):
@@ -70,7 +70,9 @@ def create_group_commutator_submatrices(submatrices_D, basis, axis):
 	return (submatrices_V, submatrices_W)
 	
 ##############################################################################
-def aram_diagonal_factor(matrix_U, basis):
+# We don't currently use axis, I need to find a better way to make this
+# interoperable with dawson_group_factor
+def aram_diagonal_factor(matrix_U, basis, axis):
 	# Get the SU(d) unitary matrix_U in diagonal form (matrix_D)
 	(matrix_P, matrix_D) = diagonalize(matrix_U, basis)
 

@@ -21,6 +21,14 @@ I've tested this on
 	Mac OS X 10.5, python-2.5.4, numpy-1.4.1 from fink
 	Linux (Fedora Core 13), python-2.6.4, numpy-1.3.0.
 
+Note that generated files are included in this distribution,
+generated on the Mac OS X system above, but they may not be
+compatible with your version of Python and numpy.
+
+If it doesn't work (complains about lack of defmatrix module),
+then you'll have to wipe those files (in pickles/) and
+re-generate them according to the instructions below.
+
 -----------------------------------------------------------------
 FILES:
 

@@ -21,7 +21,7 @@ print "n= " + str(n)
 sk_set_factor_method(dawson_group_factor)
 sk_set_basis(H2)
 sk_set_axis(X_AXIS)
-sk_build_tree("su2", 16)
+sk_build_tree("su2", 15)
 
 Un = solovay_kitaev(op_U, n)
 print "Approximated U: " + str(Un)

@@ -220,6 +220,11 @@ def dawson_x_group_factor(matrix_U, basis):
 	#print "vector_a= " + str(vector_a)
 	#print "vector_b= " + str(vector_b)
 	
+	if (approx_equals(theta, 0)):
+		# Too close to zero, just return two identities
+		return [basis.identity.matrix, basis.identity.matrix]
+		#raise RuntimeError("Theta too close to zero!")
+	
 	matrix_A = axis_to_unitary(vector_a, theta/2.0, basis)
 	matrix_B = axis_to_unitary(vector_b, theta/2.0, basis)
 	
@@ -230,6 +235,11 @@ def dawson_x_group_factor(matrix_U, basis):
 
 #############################################################################
 def dawson_group_factor(matrix_U, basis, x_axis):
+
+	dist = fowler_distance(matrix_U, basis.identity.matrix)
+	if (approx_equals_tolerance(dist, 0, TOLERANCE10)):
+		# Too close to identity, just return a pair of identities
+		return [basis.identity.matrix, basis.identity.matrix]
 
 	#print "*********************DAWSON_GROUP_FACTOR"
 

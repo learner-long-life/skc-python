@@ -113,8 +113,8 @@ class KDTree():
 			left_children = op_list[0:median] #eliminate_close_children(op_list[0:median], op_this.matrix)
 			right_children = op_list[median+1:] #eliminate_close_children(op_list[median+1:], op_this.matrix)
 			node = KDTreeNode(op=op_this,
-							  left=build_kdtree(new_left, depth+1),
-							  right=build_kdtree(new_right, depth+1)
+							  left=build_kdtree(left_children, depth+1),
+							  right=build_kdtree(right_children, depth+1)
 							  )
 			node.axis = axis
 			node.dim_val = op_this.dimensions[axis]

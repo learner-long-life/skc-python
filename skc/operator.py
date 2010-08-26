@@ -47,6 +47,15 @@ class Operator:
 			self.matrix = self.matrix * iset_dict[ancestor].matrix
 		#print "MATRIX IS UNITARY"
 		assert_matrix_unitary(self.matrix)
+		msg = "Looks like someone forgot to simplify away this sequence, hmm?" \
+			+ str(self.ancestors)
+		dist = trace_distance(self.matrix, identity.matrix)
+		close_to_identity = approx_equals(dist, 0)
+		named_identity = (self.name == identity.name)
+		return close_to_identity and (not named_identity)
+		# Uncomment the following two lines if you want to catch identities
+		#assert_matrices_approx_not_equal(self.matrix, identity.matrix, \
+		#	message=msg)
 
 	def multiply(self, other, new_name=""):
 		new_matrix = self.matrix * other.matrix

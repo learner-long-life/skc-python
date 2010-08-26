@@ -20,7 +20,8 @@ def get_basis_components(matrix_H, basis):
 		component_dict[key] = kc_alpha.real
 		#print str(key) + "=> " + str(kc_alpha)
 		# Components should be real, with negligible imaginary parts
-		assert_approx_equals(kc_alpha.imag, 0)
+		msg = str(matrix_H)
+		#assert_approx_equals(kc_alpha.imag, 0, message=msg)
 	
 	# Norm will always be positive, so we have to fix up the sign that
 	# we return below, b/c it will be interpreted as (two times) an angle

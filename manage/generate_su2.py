@@ -16,12 +16,16 @@ for insn in iset2:
 identity_rule = IdentityRule()
 double_H_rule = DoubleIdentityRule('H')
 adjoint_rule = AdjointRule()
+T8_rule = GeneralRule(['T','T','T','T','T','T','T','T'], 'I')
+Td8_rule = GeneralRule(['Td','Td','Td','Td','Td','Td','Td','Td'], 'I')
 # We should also add a rule for 8T gates -> I
 
 simplify_rules = [
 	identity_rule,
 	double_H_rule,
-	adjoint_rule
+	adjoint_rule,
+	T8_rule,
+	Td8_rule
 	]
 #simplify_rules = []
 

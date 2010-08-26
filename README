@@ -1,4 +1,4 @@
-Quantum Compiler
+Quantum Compiler, v0.02
 https://sourceforge.net/p/quantumcompiler/home/
 
 This is a research implementation of a quantum compiler,
@@ -7,6 +7,12 @@ of successive approximation.
 It is based on similar compilers by Chris Dawson and Aram Harrow.
 Links can be found at the project homepage above.
 I will think of a snazzier URL later.
+
+-----------------------------------------------------------------
+RELEASE NOTES:
+
+v0.01: Initial implementation with working SU(2) example.
+v0.02: Added README file, releases script, and working SU(4) example.
 
 -----------------------------------------------------------------
 REQUIREMENTS:
@@ -23,6 +29,7 @@ This distribution contains the following top-level directories:
 /manage/	Scripts for running maintenance tasks
 /pickles/	Generated files (described below)
 /scratch/	Sandbox for experimenting with functionality
+/releases/	Scripts and directory For generating releases
 /tests/		Unit tests
 
 -----------------------------------------------------------------
@@ -96,3 +103,86 @@ want to watch.
 
 Okay, so now we have generated sequences on disk, ready to be processed
 into a tree for efficient nearest-neighbor searching.
+
+-----------------------------------------------------------------
+2. SEARCHING
+
+This is combined with actually running the Solovay-Kitaev algorithm in practice,
+since it takes longer to build the tree, save it to a file, and then load it
+into memory again later. So we just build the tree, reading the generation
+files from the previous step, and then run the compiler at the same time.
+
+However, you may be curious about the kdtree we use. Yes, that's right, I said
+kd-tree.
+
+http://en.wikipedia.org/wiki/Kd-tree
+
+I stole the Python implementation in that example, and modified it for use
+with unitary operators.
+
+If you want to build a kd-tree and then immediately search for the nearest
+neighbor to a random unitary, you can run this script:
+
+	python scratch/scratch_kdtree_su2.py
+
+This is the basic lookup operation done when Solovay-Kitaev bottoms out in
+its recursion.
+
+It will show you both the Fowler distance (which discounts any global phase
+factor) as well as the more conventional trace distance.
+
+For SU(2) and sequences up to 16 in length in our example,
+you will typically get a Fowler distance of about 0.02 to 0.06.
+Not great, but workable.
+
+-----------------------------------------------------------------
+3. COMPILING
+
+Okay okay, enough chit chat. Time for the main attraction.
+
+	python scratch/sk_dawson_su2.py
+
+This script is so-named because it uses Chris Dawson's group factoring
+method for SU(2). For the given example (n=2), you should get an error
+of 0.00498 in Fowler distance, which again, is nothing to sneeze at for
+two levels of recursion.
+
+-----------------------------------------------------------------
+FUTURE IMPROVEMENTS
+
+So there is a lot of work to be done to improve the performance of this
+implementation. As it is, it would take several hours to run an SU(4)
+compilation with sufficient accuracy, and it would probably be infeasible
+to run it for SU(8).
+
+Here are the areas I can think of off the top of my head:
+
+* Rewrite it in Cython and static typing to speed this up.
+  Really, I kinda regret writing this in Python because it is sooo
+  slow, but numpy is very convenient.
+  But compared to Aram's and Chris's C++ implementations, it makes
+  me cry.
+* Profile it to find the slow parts.
+* Remove assertions.
+
+As for new functionality, it would be interesting to compare different
+group factoring methods, and see whether better convergence occurs for
+Aram's SU(2) factoring or Chris's.
+
+Also, we could implement net calculation to determine the epsilon-0 of
+our basic approximations (initial net) to see whether it meets the
+critical epsilon for Solovay-Kitaev to converge. Right now I am just
+winging it.
+
+Of course, generic SU(d) compilation is not that interesting and way too hard.
+It would probably be more effective to implement Kitaev's idea of whole
+circuit compilation, instead of the single gate compilation presented above.
+
+Alternatively, we could examine what gates are interesting in popular algorithms,
+like quantum phase estimation, and then work backwards to optimize our compilers
+just for those gates.
+
+A third approach is to extend Austin Fowler's work to hand-compile a universal
+two qubit fault-tolerant gate (like CNOT) for the Steane code, or to try generalizing
+his techniques to other codes.
+

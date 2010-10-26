@@ -7,7 +7,7 @@ import cPickle
 ##############################################################################
 # GLOBAL VARIABLES
 global_sequences = []
-chunk_size = 1000000	# number of sequences to chunk together into a file
+chunk_size = 100000	# number of sequences to chunk together into a file
 file_counter = 1
 filename_prefix = ""
 filename_suffix = ""
@@ -108,9 +108,7 @@ def save_chunk_to_file():
 # Garbage collect the sequences
 def reset_global_sequences():
 	global global_sequences
-	global file_counter
 	global_sequences = []
-	file_counter = 1
 	
 ##############################################################################
 def reset_generation_stats():
@@ -118,6 +116,11 @@ def reset_generation_stats():
 	global generation_length
 	generation_count = 0
 	generation_length = 0
+
+##############################################################################
+def reset_file_counter():
+	global file_counter
+	file_counter = 1
 
 ##############################################################################
 def reset_global_stats():

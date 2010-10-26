@@ -127,6 +127,7 @@ def basic_approxes(l_0, new_settings):
 			continue
 		# Generate a new generation using the previous one as prefixes
 		# we pass in the generation num of the one that just passed
+		reset_file_counter()
 		map_to_file_chunks(i, gen_basic_approx_generation)
 		print_generation_stats(i+1)
 	

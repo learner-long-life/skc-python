@@ -137,6 +137,15 @@ def matrix_direct_sum(matrix_A, matrix_B):
   direct_sum[:matrix_A.shape[0],:matrix_A.shape[1]] = matrix_A
   direct_sum[matrix_A.shape[0]:,matrix_A.shape[1]:] = matrix_B
   return direct_sum
+
+##############################################################################
+def assert_vectors_approx_equal(vector1, vector2, tolerance=TOLERANCE3):
+	vector_len1 = len(vector1)
+	vector_len2 = len(vector2)
+	assert(vector_len1 == vector_len2)
+	msg = "Vectors not-equal:\n" + str(vector1) + "\n" +  str(vector2)
+	for i in range(0, vector_len1):
+		assert_approx_equals_tolerance(vector1[i], vector2[i], tolerance, msg)
   
 ##############################################################################
 def assert_matrices_approx_equal(matrix1, matrix2, distance=trace_distance,

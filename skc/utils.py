@@ -24,6 +24,13 @@ THREE_PI_HALF = 1.5*PI
 TWO_PI = 2*PI
 
 ##############################################################################
+def normalize(array):
+	norm = scipy.linalg.norm(array)
+	array = numpy.array(array) / norm
+	assert_approx_equals(scipy.linalg.norm(array), 1.0)
+	return array
+
+##############################################################################
 def matrixify(array):
 	return numpy.matrix(array, dtype=numpy.complex)
 

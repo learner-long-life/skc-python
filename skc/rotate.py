@@ -23,8 +23,8 @@ def rotate_Y(theta):
 
 # Create the SU(2) matrix for rotating about the z-axis by theta radians
 def rotate_Z(theta):
-	a = math.cos(theta/2.0) - math.sin(theta/2.0)
+	a = math.cos(theta/2.0) - 1j*math.sin(theta/2.0)
 	b = 0
 	c = 0
-	d = math.cos(theta/2.0) + math.sin(theta/2.0)
+	d = math.cos(theta/2.0) + 1j*math.sin(theta/2.0)
 	return matrixify([[a,b],[c,d]])

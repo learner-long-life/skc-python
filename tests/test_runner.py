@@ -11,6 +11,7 @@ import test_simplify
 import test_operator
 import test_hypersphere
 import test_trig
+import test_rotate
 
 loader = unittest.TestLoader()
 
@@ -19,6 +20,7 @@ suite.addTest(test_recompose.get_suite())
 suite.addTest(test_find_basis.get_suite())
 suite.addTest(test_utils.get_suite())
 suite.addTest(test_trig.get_suite())
+suite.addTest(test_rotate.get_suite())
 suite.addTest(test_matrix_ln.get_suite())
 suite.addTest(test_diagonalize.get_suite())
 suite.addTest(test_compose.get_suite())

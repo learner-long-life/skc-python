@@ -1,4 +1,4 @@
-from skc.dawson_factor import *
+from skc.dawson.factor import *
 from skc.basis import *
 from skc.operator import *
 from skc.utils import *

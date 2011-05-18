@@ -8,7 +8,7 @@ class TestSimplifyEngine(unittest.TestCase):
 
 	def setUp(self):
 		rules = [AdjointRule(), DoubleIdentityRule('Q'), IdentityRule(),
-			GeneralRule(['X','Y','Z'])]
+			GeneralRule(['X','Y','Z']), DoubleAdjointRule()]
 		self.engine = SimplifyEngine(rules)
 		
 	def test_min_arg_count(self):
@@ -69,8 +69,7 @@ class TestSimplifyEngine(unittest.TestCase):
 		(simplify_length, new_sequence) = self.engine.simplify(sequence)
 		self.assertEqual(new_sequence, ['X'])
 		self.assertEqual(simplify_length, 3)
-		
-		
+	
 	def test_double_q_middle(self):
 		# This should simplify 3 Q's down to just Q
 		sequence = ['X', 'Q', 'Q', 'Q', 'Z']
@@ -91,6 +90,12 @@ class TestSimplifyEngine(unittest.TestCase):
 		(simplify_length, new_sequence) = self.engine.simplify(sequence)
 		self.assertEqual(new_sequence, ['X', 'Q', 'Y', 'Q', 'Z'])
 		self.assertEqual(simplify_length, 0)
+		
+	def test_double_adjoint(self):
+		sequence = ['X', 'Ydd']
+		(simplify_length, new_sequence) = self.engine.simplify(sequence)
+		self.assertEqual(new_sequence, ['X', 'Y'])
+		self.assertEqual(simplify_length, 0)		
 
 ##############################################################################
 class TestDoubleIdentityRule(unittest.TestCase):

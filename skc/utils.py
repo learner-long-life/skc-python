@@ -220,8 +220,8 @@ def n_from_eps(eps, eps_0, c_approx):
 	denom = numpy.log(3.0/2)
 	eps_c_approx_sq = eps * c_approx_sq
 	eps_0_c_approx_sq = eps_0 * c_approx_sq
-	eps_ln = numpy.log(1.0 / eps_c_approx_sq)
-	eps_0_ln = numpy.log(1.0 / eps_0_c_approx_sq)
+	eps_ln = numpy.log(eps_c_approx_sq)
+	eps_0_ln = numpy.log(eps_0_c_approx_sq)
 	big_ln = numpy.log(eps_ln / eps_0_ln) / denom
 	return numpy.ceil(big_ln)
 	

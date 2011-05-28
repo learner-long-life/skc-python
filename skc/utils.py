@@ -23,6 +23,18 @@ PI_HALF = PI / 2
 THREE_PI_HALF = 1.5*PI
 TWO_PI = 2*PI
 
+self_adjoint_operators = []
+
+##############################################################################
+def dagger_and_simplify(name):
+	len_name = len(name)
+	if ((len_name < 1) or (name in self_adjoint_operators)):
+		return name
+	if (name[len_name-1] == 'd'):
+		return name[0:len_name-1]
+	else:
+		return name+'d'
+
 ##############################################################################
 def matrixify(array):
 	return numpy.matrix(array, dtype=numpy.complex)

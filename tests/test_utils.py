@@ -28,7 +28,15 @@ class TestUtils(unittest.TestCase):
 		A = matrix_direct_sum(numpy.matrix(1), numpy.matrix(2))
 		B = matrixify([[1,0],[0,2]])
 		assert_matrices_approx_equal(A, B, trace_distance)
-
+		
+	def test_dagger_and_simplify(self):
+		name0 = dagger_and_simplify('')
+		self.assertEqual(name0, "")
+		name1 = dagger_and_simplify('A')
+		self.assertEqual(name1, "Ad")
+		name2 = dagger_and_simplify("Ad")
+		self.assertEqual(name2, "A")
+	
 ##############################################################################
 def get_suite():
 	suite = unittest.TestSuite()

@@ -1,18 +1,38 @@
-Quantum Compiler, v0.02
-https://sourceforge.net/p/quantumcompiler/home/
+Quantum Compiler, v0.03
+http://quantum-compiler.org
+29 May 2011
 
 This is a research implementation of a quantum compiler,
 initially using the Solovay-Kitaev algorithm
 of successive approximation.
 It is based on similar compilers by Chris Dawson and Aram Harrow.
 Links can be found at the project homepage above.
-I will think of a snazzier URL later.
 
 -----------------------------------------------------------------
-RELEASE NOTES:
+LIMITATIONS:
+
+Currently, gate accuracy is limited to about 1e-5 using Fowler
+distance, occurring around n=7. This appears to be due to numerical errors.
+The basic approximations (initial epsilon nets) are searched by using
+a kd-tree data structure, which requires decomposing SU(d) unitarties
+to R^{{d^2}-1}. This decomposition fails in numpy/scipy when the
+unitary in question is too close to identity. In those cases, the
+kd-tree search simply returns the identity, which is what limits
+the compiled gate accuracy.
+
+Alternative solutions in the future may include some kind of limited
+exhaustive search for very fine epsilon nets whenever this near-identity
+case occurs.
+
+-----------------------------------------------------------------
+CHANGE NOTES:
 
 v0.01: Initial implementation with working SU(2) example.
 v0.02: Added README file, releases script, and working SU(4) example.
+v0.03: Fixed NaN ValueError due to decomposing unitaries too close to identity.
+       Simplify sequences after every multiplication.
+       Eliminates extraneous dagger for self-adjoint operators
+         (currently Hadamard and identity in the default gate set)
 
 -----------------------------------------------------------------
 REQUIREMENTS:
@@ -217,7 +237,13 @@ Alternatively, we could examine what gates are interesting in popular algorithms
 like quantum phase estimation, and then work backwards to optimize our compilers
 just for those gates.
 
-A third approach is to extend Austin Fowler's work to hand-compile a universal
-two qubit fault-tolerant gate (like CNOT) for the Steane code, or to try generalizing
-his techniques to other codes.
+Another useful direction is to extend Austin Fowler's work to hand-compile a
+universal two qubit fault-tolerant gate (like CNOT) for fault-tolerant gates.
+
+I am currently working on these last two directions, so stay tuned!
+Any and all feedback is welcome.
+
+--
+Paul Pham
+ppham at local hyphen box dot org
 

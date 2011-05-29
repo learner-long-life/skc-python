@@ -46,13 +46,19 @@ def gen_basic_approx_generation(prefixes):
 		
 		# Only assign to operator if we have a valid, new, simplified sequence
 		new_op.ancestors = simplified_sequence
-		close_to_identity = new_op.matrix_from_ancestors(settings.iset_dict, settings.identity)
+		close_to_identity = new_op.matrix_from_ancestors(settings.iset_dict,
+			settings.identity)
+		
 		# If this matrix is close to identity, return True to skip it
 		if (close_to_identity):
 			return True
 		
 		# Decompose into R^{d^2} for later processing into search trees
-		(components, K, matrix_H) = unitary_to_axis(new_op.matrix, settings.basis)
+		try:
+			(components, K, matrix_H) = unitary_to_axis(new_op.matrix, settings.basis)
+		except ValueError:
+			# too close to identity to decompose, just return here
+			return True
 		dimensions = settings.basis.sort_canonical_order(components)
 		
 		# Take absolute value of components

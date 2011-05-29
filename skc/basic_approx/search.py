@@ -15,7 +15,13 @@ def search_kdtree(tree, search_U, basis):
 	
 	begin_time = time.time()
 	
-	(components, K, matrix_H) = unitary_to_axis(search_U, basis)
+	try:
+		(components, K, matrix_H) = unitary_to_axis(search_U, basis)
+	except ValueError:
+		print "ValueError"
+		# too close to identity, decomposition failed, just return identity
+		return basis.identity
+
 	# Re-center angles from 0 to 2pi, instead of -pi to pi
 	if (K < 0):
 		for (k,v) in components.items():

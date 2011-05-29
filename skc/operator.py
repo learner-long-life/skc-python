@@ -41,7 +41,7 @@ class Operator:
 	# Sets the matrix of this operator by its ancestors taken from a set
 	# iset - a dictionary of labels to operators for the instruction set
 	# identity - the identity to start multiplication with
-	def matrix_from_ancestors(self, iset_dict, identity):
+	def matrix_from_ancestors(self, iset_dict, identity, tolerance=TOLERANCE):
 		self.matrix = identity.matrix
 		for ancestor in self.ancestors:
 			self.matrix = self.matrix * iset_dict[ancestor].matrix
@@ -49,8 +49,8 @@ class Operator:
 		assert_matrix_unitary(self.matrix)
 		msg = "Looks like someone forgot to simplify away this sequence, hmm?" \
 			+ str(self.ancestors)
-		dist = trace_distance(self.matrix, identity.matrix)
-		close_to_identity = approx_equals(dist, 0)
+		dist = fowler_distance(self.matrix, identity.matrix)
+		close_to_identity = approx_equals_tolerance(dist, 0, tolerance)
 		named_identity = (self.name == identity.name)
 		return close_to_identity and (not named_identity)
 		# Uncomment the following two lines if you want to catch identities
@@ -69,8 +69,8 @@ class Operator:
 		reversed_ancestors.reverse()
 		new_ancestors = []
 		for ancestor in reversed_ancestors:
-			new_ancestors.append(ancestor+"d")
-		new_name = self.name + "d"
+			new_ancestors.append(dagger_and_simplify(ancestor))
+		new_name = dagger_and_simplify(self.name)
 		return Operator(new_name, new_matrix, new_ancestors)
 		
 	def scale(self, scalar, new_name=""):

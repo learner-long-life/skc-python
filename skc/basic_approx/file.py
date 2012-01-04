@@ -7,7 +7,7 @@ import cPickle
 ##############################################################################
 # GLOBAL VARIABLES
 global_sequences = []
-chunk_size = 1000000	# number of sequences to chunk together into a file
+chunk_size = 10000	# number of sequences to chunk together into a file
 file_counter = 1
 filename_prefix = ""
 filename_suffix = ""

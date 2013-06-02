@@ -122,14 +122,11 @@ def print_indented(message, depth):
 def tensor_chain(op_vector):
 	if (len(op_vector) == 0):
 		raise RuntimeError("Cannot chain empty list of operators")
-	product = None
+	product = op_vector.pop()
 	for op in op_vector:
 		#print "op= " + str(op)
 		#print "product= " + str(product)
-		if (product == None):
-			product = op
-		else:
-			product = numpy.kron(product, op)
+		product = numpy.kron(product, op)
 	return product
 
 ##############################################################################
